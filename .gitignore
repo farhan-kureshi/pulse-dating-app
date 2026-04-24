@@ -1,0 +1,18 @@
+# React Junk
+node_modules/
+dist/
+.env
+
+# Python/Django Junk
+__pycache__/
+*.pyc
+db.sqlite3
+
+# User Uploads (Media)
+pulsedate_backend/media/
+
+# Isse saare node_modules block ho jayenge chahe wo kahin bhi hon
+**/node_modules/
+**/__pycache__/
+**/db.sqlite3
+**/media/

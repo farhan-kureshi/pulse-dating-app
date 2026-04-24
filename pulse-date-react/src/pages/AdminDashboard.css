@@ -1,0 +1,461 @@
+/* AdminDashboard.css - PREMIUM THEME */
+.admin-layout {
+    display: flex;
+    min-height: 100vh;
+    background-color: #0f172a;
+    /* Deep premium dark background */
+    color: #f8fafc;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Sidebar Styling */
+.admin-sidebar {
+    width: 250px;
+    /* 👈 Pehle 280px tha, isko chhota kiya */
+    background-color: #1e293b;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #334155;
+}
+
+.admin-brand {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #f5b748;
+    /* Premium Gold */
+    margin-bottom: 40px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    letter-spacing: 1px;
+}
+
+.admin-nav-item {
+    padding: 15px 20px;
+    margin-bottom: 10px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    color: #94a3b8;
+    /* Light slate for inactive text */
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Tab Hover & Active State */
+.admin-nav-item:hover,
+.admin-nav-item.active {
+    background: linear-gradient(90deg, rgba(245, 183, 72, 0.15) 0%, rgba(245, 183, 72, 0) 100%);
+    color: #f5b748;
+    /* Gold active text */
+    border-left: 4px solid #f5b748;
+}
+
+.admin-logout {
+    margin-top: auto;
+    color: #fca5a5;
+    /* Soft Red for logout */
+}
+
+.admin-logout:hover {
+    background: linear-gradient(90deg, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0) 100%);
+    color: #ef4444;
+    border-left: 4px solid #ef4444;
+}
+
+/* Main Content Area */
+.admin-main {
+    flex: 1;
+    padding: 30px;
+    /* 👈 Pehle 40px tha */
+    overflow-y: auto;
+}
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.admin-header h2 {
+    font-weight: 800;
+    margin: 0;
+    color: #f8fafc;
+}
+
+/* Stats Cards */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    /* 👈 Pehle 240px tha. Ise 180px karne se 5 cards ek line me aayenge! */
+    gap: 20px;
+    /* 👈 Gap thoda kam kiya */
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background-color: #1e293b;
+    padding: 20px;
+    /* 👈 Pehle 25px tha */
+    border-radius: 16px;
+    border: 1px solid #334155;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    /* 👈 Gap 20px se 15px kiya */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    border-color: #475569;
+}
+
+.stat-icon {
+    width: 50px;
+    /* 👈 Pehle 60px tha */
+    height: 50px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    /* 👈 Icon size thoda chhota kiya */
+}
+
+.stat-info p {
+    margin: 0;
+    color: #cbd5e1;
+    font-size: 0.8rem;
+    /* 👈 Font size chhota kiya */
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.stat-info h3 {
+    margin: 5px 0 0;
+    font-size: 1.5rem;
+    /* 👈 Pehle 1.8rem tha */
+    font-weight: 800;
+    color: #fff;
+}
+
+/* Users Table */
+.admin-table-container {
+    background-color: #1e293b;
+    border-radius: 16px;
+    border: 1px solid #334155;
+    padding: 25px;
+    overflow-x: auto;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+}
+
+.admin-table-container h4 {
+    margin-bottom: 20px;
+    font-weight: 700;
+    color: #f8fafc;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admin-table th,
+.admin-table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #334155;
+}
+
+.admin-table th {
+    color: #94a3b8;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+.admin-table td {
+    vertical-align: middle;
+    color: #f1f5f9;
+}
+
+.user-cell {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-cell img {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #475569;
+}
+
+.vip-badge {
+    background: linear-gradient(45deg, #f5b748, #f59e0b);
+    color: #000;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+.free-badge {
+    background-color: #334155;
+    color: #cbd5e1;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+/* Action Buttons */
+.action-btn {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: 0.2s;
+    margin-right: 10px;
+}
+
+.btn-vip {
+    background-color: rgba(245, 183, 72, 0.1);
+    color: #f5b748;
+    border: 1px solid #f5b748;
+}
+
+.btn-vip:hover {
+    background-color: #f5b748;
+    color: #000;
+}
+
+.btn-block {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid #ef4444;
+}
+
+.btn-block:hover {
+    background-color: #ef4444;
+    color: #fff;
+}
+
+/* Graph Container Styling */
+.chart-container {
+    background-color: #1e293b;
+    border-radius: 16px;
+    border: 1px solid #334155;
+    padding: 25px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+    margin-bottom: 40px;
+}
+
+.chart-title {
+    color: #f8fafc;
+    font-weight: 700;
+    margin-bottom: 20px;
+    font-size: 1.2rem;
+}
+
+/* =========================================
+   SIDEBAR COLLAPSE (DESKTOP) & HAMBURGER
+========================================= */
+.admin-sidebar {
+    transition: all 0.3s ease;
+    overflow-x: hidden;
+    white-space: nowrap;
+    z-index: 1000;
+}
+
+/* Jab sidebar patla ho jayega */
+.admin-sidebar.collapsed {
+    width: 90px !important;
+    padding: 20px 10px;
+}
+
+/* Patle hone par text chupao */
+.admin-sidebar.collapsed .nav-text,
+.admin-sidebar.collapsed .admin-brand-text {
+    display: none;
+}
+
+/* Patle hone par Icons ko center me lao */
+.admin-sidebar.collapsed .admin-nav-item {
+    justify-content: center;
+    padding: 15px 0;
+}
+
+.admin-sidebar.collapsed .admin-nav-item i {
+    margin: 0;
+    font-size: 1.3rem;
+}
+
+.admin-sidebar.collapsed .admin-brand {
+    justify-content: center;
+}
+
+/* 3-Line Button ki styling (Updated for App-like look) */
+.admin-menu-toggle {
+    cursor: pointer;
+    padding: 5px;
+    background: transparent;
+    /* 👈 Box/Background hata diya */
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.admin-menu-toggle i {
+    font-size: 1.6rem !important;
+    /* 👈 Icon ko thoda bada aur prominent kiya */
+    color: #ffffff;
+}
+
+/* Hover karne par halka sa fade hoga, dabba nahi aayega */
+.admin-menu-toggle:hover i {
+    opacity: 0.7;
+}
+
+/* =========================================
+   MOBILE RESPONSIVENESS (100% RESPONSIVE)
+========================================= */
+@media (max-width: 992px) {
+
+    /* Mobile me Sidebar chupa do (Off-canvas) */
+    .admin-sidebar {
+        position: fixed;
+        left: -100%;
+        top: 0;
+        height: 100vh;
+        width: 280px !important;
+        /* Mobile me hamesha lamba rahega */
+        box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Jab button dabe toh bahar aao */
+    .admin-sidebar.mobile-open {
+        left: 0;
+    }
+
+    /* Mobile par text hamesha dikhega */
+    .admin-sidebar.collapsed .nav-text,
+    .admin-sidebar.collapsed .admin-brand-text {
+        display: inline-block;
+    }
+
+    .admin-sidebar.collapsed .admin-nav-item {
+        justify-content: flex-start;
+        padding: 15px 20px;
+    }
+
+    /* Main Area Adjustments */
+    .admin-main {
+        padding: 20px 15px;
+        /* Padding kam kardi */
+        width: 100vw;
+    }
+
+    .admin-header h2 {
+        font-size: 1.3rem;
+        /* Header chhota kiya */
+    }
+
+    .welcome-text {
+        display: none;
+        /* Mobile pe jagah nahi hoti toh text hata diya */
+    }
+
+    /* Stats Dabbe chote kardiye */
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 15px;
+    }
+
+    .stat-card {
+        padding: 15px;
+    }
+
+    .stat-info h3 {
+        font-size: 1.3rem;
+    }
+
+    .stat-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+}
+
+/* --- MOBILE TABLE FIXES --- */
+
+/* 1. Table ko dabne se roko aur scrollable banao */
+.admin-table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    /* Mobile par smooth scroll ke liye */
+}
+
+.admin-table {
+    min-width: 600px;
+    /* Table ki kam se kam chaurai fix kar di */
+}
+
+/* 2. Badge text ko ek line mein force karo */
+.vip-badge {
+    white-space: nowrap !important;
+    display: inline-block;
+}
+
+/* Jab sidebar patla ho, toh logo aur text chupa do, sirf 3-lines dikhao */
+.admin-sidebar.collapsed .admin-brand-text,
+.admin-sidebar.collapsed .brand-logo {
+    display: none;
+}
+
+/* Patle hone par 3-lines ko center mein lane ke liye */
+.admin-sidebar.collapsed .admin-brand {
+    justify-content: center !important;
+}
+/* --- BRAND HEADER PERFECT ALIGNMENT --- */
+.admin-brand {
+    display: flex !important;
+    align-items: center !important; 
+    gap: 12px;
+    margin-bottom: 30px;
+}
+
+.brand-logo {
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 8px;
+}
+
+.admin-menu-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0; /* Extra padding hatayi */
+}
+
+.admin-brand-text {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #f5b748;
+    white-space: nowrap !important; 
+    margin: 0 !important;
+    /* 👇 YEH 2 LINES JADU KARENGI 👇 */
+    line-height: 1 !important; /* Invisible padding khatam karega */
+    transform: translateY(3px); /* Text ko 3 pixel thoda neeche dhakel dega logo ke barabar lane ke liye */
+}

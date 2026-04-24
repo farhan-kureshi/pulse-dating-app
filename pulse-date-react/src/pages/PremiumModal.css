@@ -1,0 +1,75 @@
+/* =========================================
+   PULSEDATE: VIP PREMIUM MODAL
+========================================= */
+.premium-overlay {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(15, 12, 25, 0.85);
+    backdrop-filter: blur(15px);
+    z-index: 10000;
+    display: flex; align-items: center; justify-content: center;
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+.premium-card {
+    background: linear-gradient(145deg, #2b2142, #181226);
+    border: 1px solid rgba(245, 183, 72, 0.3);
+    border-radius: 30px; padding: 40px 30px;
+    width: 90%; max-width: 420px;
+    text-align: center; color: white; position: relative;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.5), 0 0 40px rgba(245, 183, 72, 0.15);
+    transform: translateY(20px); opacity: 0;
+    animation: slideUp 0.4s 0.1s ease-out forwards;
+}
+
+.close-premium {
+    position: absolute; top: 20px; right: 25px;
+    font-size: 1.5rem; color: #888; cursor: pointer; transition: 0.3s;
+}
+.close-premium:hover { color: white; transform: rotate(90deg); }
+
+.vip-icon {
+    font-size: 3.5rem; color: #f5b748; margin-bottom: 15px;
+    text-shadow: 0 0 20px rgba(245, 183, 72, 0.5);
+}
+
+.gold-text {
+    background: linear-gradient(to right, #f5b748, #ffe099, #f5b748);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    font-family: var(--font-heading); font-weight: 800; font-size: 2.2rem;
+}
+
+.premium-features {
+    text-align: left; margin: 30px 0; padding: 0 10px;
+}
+.premium-features p {
+    margin-bottom: 12px; font-size: 1.05rem; display: flex; align-items: center; gap: 12px;
+}
+.feature-check { color: #17e27a; font-size: 1.2rem; }
+
+/* Pricing Grid */
+.pricing-grid { display: flex; gap: 12px; margin-bottom: 30px; }
+.price-box {
+    flex: 1; border: 2px solid #333; border-radius: 18px; padding: 20px 10px;
+    cursor: pointer; transition: all 0.3s; background: rgba(255,255,255,0.02);
+    position: relative;
+}
+.price-box:hover { border-color: #555; transform: translateY(-3px); }
+.price-box.active {
+    border-color: #f5b748; background: rgba(245, 183, 72, 0.08);
+    box-shadow: 0 10px 20px rgba(245, 183, 72, 0.1);
+}
+.save-badge {
+    position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+    background: #f5b748; color: #181226; font-size: 0.7rem; font-weight: 800;
+    padding: 3px 10px; border-radius: 10px; text-transform: uppercase; letter-spacing: 1px;
+}
+
+.btn-gold {
+    background: linear-gradient(45deg, #f5b748, #ffc966);
+    color: #181226; border: none; width: 100%; padding: 16px;
+    font-size: 1.2rem; font-weight: 800; border-radius: 30px;
+    cursor: pointer; transition: 0.3s; box-shadow: 0 8px 20px rgba(245, 183, 72, 0.3);
+}
+.btn-gold:hover { transform: scale(1.05); box-shadow: 0 12px 25px rgba(245, 183, 72, 0.5); }
+
+@keyframes slideUp { to { transform: translateY(0); opacity: 1; } }

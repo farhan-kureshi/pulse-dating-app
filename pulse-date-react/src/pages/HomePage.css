@@ -1,0 +1,100 @@
+/* --- Core Styles & Preloader --- */
+#preloader {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+    background-color: var(--bg-color); display: flex; flex-direction: column;
+    justify-content: center; align-items: center; z-index: 9999;
+    transition: opacity 0.8s ease-out, visibility 0.8s ease-out;
+}
+.pulse-logo { font-size: 4rem; color: var(--accent-color); animation: heartbeat 1s infinite alternate cubic-bezier(0.4, 0, 0.2, 1); }
+.preloader-text { margin-top: 15px; font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700; color: var(--primary-color); letter-spacing: 1px; }
+@keyframes heartbeat { 0% { transform: scale(1); } 100% { transform: scale(1.3); } }
+
+/* --- 1. Premium Glassmorphism Navbar (Sticky) --- */
+.aesthetic-nav {
+    position: fixed !important; /* Ab navbar top par fix rahega */
+    top: 0; width: 100%; z-index: 1000;
+    background: rgba(250, 249, 247, 0.75) !important; /* Semi-transparent */
+    backdrop-filter: blur(15px); /* Gen Z Frosted Glass Effect */
+    -webkit-backdrop-filter: blur(15px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 15px 5%; transition: all 0.3s ease;
+}
+.navbar-brand { font-family: var(--font-heading); font-weight: 700; font-size: 1.6rem; color: var(--primary-color) !important; }
+.nav-link { font-weight: 500; color: var(--primary-color) !important; margin: 0 15px; font-size: 1.05rem; position: relative; transition: color 0.3s; }
+.nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -2px; left: 50%; background-color: var(--accent-color); transition: all 0.3s ease-in-out; transform: translateX(-50%); }
+.nav-link:hover::after { width: 100%; }
+.nav-link:hover { color: var(--accent-color) !important; }
+
+/* --- 2. Sleek Buttons (No Lumpy Ovals) --- */
+.btn-ghost {
+    background: transparent; border: none; color: var(--primary-color); font-weight: 600; padding: 8px 16px;
+    text-decoration: none; transition: color 0.3s;
+}
+.btn-ghost:hover { color: var(--accent-color); }
+
+.btn-pill {
+    background-color: var(--primary-color) !important; color: white !important;
+    border-radius: 50px; /* Perfect sleek pill shape */
+    padding: 10px 28px; font-weight: 600; text-decoration: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease; display: inline-block; border: none;
+}
+.btn-pill:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(43, 33, 66, 0.2); }
+
+/* --- 3. Hero Section (Parallax & Responsive Fix) --- */
+.hero-section {
+    min-height: 100vh; display: flex; align-items: center; position: relative;
+    padding-top: 100px; /* Space for sticky navbar */
+}
+.hero-bg-image {
+    position: absolute; top: 0; right: 0; width: 60%; height: 100%;
+    object-fit: cover; z-index: -2; border-radius: 0 0 0 50px;
+    /* Basic Parallax setup */
+    background-attachment: fixed; 
+}
+.hero-overlay {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(90deg, var(--bg-color) 45%, rgba(250, 249, 247, 0) 100%); z-index: -1;
+}
+.hero-content { padding-left: 8%; max-width: 650px; z-index: 2; }
+.hero-title { font-family: var(--font-heading); font-size: 5.5rem; font-weight: 700; line-height: 1.05; margin-bottom: 20px; color: var(--primary-color); letter-spacing: -1px; }
+.hero-subtitle { font-size: 1.15rem; line-height: 1.6; margin-bottom: 40px; color: #555; max-width: 480px; }
+
+/* --- Mobile Responsiveness (Fixing the layout breaks) --- */
+@media (max-width: 991px) {
+    .aesthetic-nav { padding: 15px 5%; background: rgba(250, 249, 247, 0.95) !important; backdrop-filter: blur(20px); }
+    .navbar-collapse { background-color: var(--bg-color); padding: 20px; border-radius: 15px; margin-top: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+    
+    .hero-section { align-items: flex-end; padding-bottom: 40px; }
+    .hero-bg-image { width: 100%; height: 60vh; top: 0; border-radius: 0; z-index: -2; }
+    .hero-overlay { background: linear-gradient(0deg, var(--bg-color) 30%, rgba(250, 249, 247, 0.2) 100%); z-index: -1; }
+    
+    .hero-content { padding: 5%; margin-top: 50vh; background: rgba(250, 249, 247, 0.85); backdrop-filter: blur(10px); border-radius: 20px; width: 90%; margin-left: auto; margin-right: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+    .hero-title { font-size: 3.5rem; }
+    
+    .feature-section { padding: 60px 0; }
+    .img-aesthetic { height: 350px; margin-bottom: 20px; }
+    .text-center.scroll-animate { padding: 0 20px; }
+}
+
+/* --- 4. Middle Content & Scroll Animations --- */
+.feature-section { padding: 120px 0; background-color: var(--bg-color); overflow-x: hidden; }
+.font-heading { font-family: var(--font-heading); color: var(--primary-color); }
+.img-aesthetic { width: 100%; height: 550px; object-fit: cover; border-radius: 20px; transition: transform 0.5s ease; }
+.img-aesthetic:hover { transform: scale(1.03); }
+
+.scroll-animate { opacity: 0; transition: opacity 0.8s ease-out, transform 0.8s ease-out; visibility: hidden; }
+.scroll-animate.active { opacity: 1; visibility: visible; }
+.reveal-up { transform: translateY(40px); }
+.scroll-animate.active.reveal-up { transform: translateY(0); }
+.reveal-left { transform: translateX(-40px); }
+.scroll-animate.active.reveal-left { transform: translateX(0); }
+.reveal-right { transform: translateX(40px); }
+.scroll-animate.active.reveal-right { transform: translateX(0); }
+
+/* --- 5. Footer Styling --- */
+.aesthetic-footer { background-color: var(--primary-color); padding: 80px 0 30px 0; color: white; border-top-left-radius: 40px; border-top-right-radius: 40px; margin-top: 60px; }
+.footer-links li { margin-bottom: 12px; }
+.footer-links a { color: rgba(255, 255, 255, 0.6); text-decoration: none; transition: all 0.3s ease; display: inline-block; font-size: 0.95rem; }
+.footer-links a:hover { color: white; transform: translateX(5px); }
+.social-links a { color: white; font-size: 1.5rem; margin-right: 15px; transition: all 0.3s ease; display: inline-block; background: rgba(255, 255, 255, 0.1); width: 45px; height: 45px; text-align: center; line-height: 45px; border-radius: 50%; }
+.social-links a:hover { background: var(--accent-color); transform: translateY(-5px); }
