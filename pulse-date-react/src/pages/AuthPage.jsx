@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './AuthPage.css';
-// import DashboardPage from './pages/DashboardPage';
+
 const AuthPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -18,7 +18,6 @@ const AuthPage = () => {
   const [showSetup, setShowSetup] = useState(false);
   const [dob, setDob] = useState('');
 
-
   // --- Profile Setup States ---
   const [selectedGender, setSelectedGender] = useState('');
   const [selectedInterestGender, setSelectedInterestGender] = useState('');
@@ -32,7 +31,6 @@ const AuthPage = () => {
   const [job, setJob] = useState('');
   const [drinking, setDrinking] = useState('');
 
-
   // --- Auto Scroll to Top on Step Change ---
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -45,15 +43,16 @@ const AuthPage = () => {
     if (selectedIntent !== 'Add intent') score += 20; // Intent
     if (selectedInterests.length > 0) score += 20; // Interests
     if (bio.length > 10) score += 20; // Bio text
-    // Agar kam se kam 1 photo upload hui hai
+    // Check if at least 1 photo has been uploaded
     if (photos && photos.some(photo => photo !== null)) score += 20;
 
     return Math.min(100, score);
   };
-  // --- Naya Django API wala Code ---
+
+  // --- Django Backend API Integration ---
   const handleSendOtp = (e) => {
     e.preventDefault();
-    if (phoneNumber.length > 5) setOtpSent(true); // OTP field dikhayega
+    if (phoneNumber.length > 5) setOtpSent(true); // Display OTP field
   };
 
   const handleVerify = async (e) => {
@@ -66,7 +65,7 @@ const AuthPage = () => {
           headers: {
             'Content-Type': 'application/json',
           },
-          // 👇 YAHAN DHYAAN DIJIYE! (Is line mein mode bhejna zaroori hai)
+          // 👇 IMPORTANT: Sending the auth mode is required here
           body: JSON.stringify({
             phone_number: phoneNumber,
             mode: mode
@@ -76,30 +75,30 @@ const AuthPage = () => {
         const data = await response.json();
 
         if (response.ok) {
-          console.log("Django Message:", data.message);
+          console.log("Backend Message:", data.message);
 
-          // 👇 NEW LINE ADDED: Save the ID to the browser memory immediately 👇
+          // Save the ID to the browser memory immediately
           localStorage.setItem('user_id', data.user_id);
 
-          // Proceed to next steps
-          // Proceed to next steps
+          // Proceed to next steps based on mode
           if (mode === 'signup') {
             setShowRules(true);
           } else {
             localStorage.setItem('isAuthenticated', 'true');
-            window.location.href = '/dashboard'; // <--- NAYA CODE
+            window.location.href = '/dashboard'; // Redirect to dashboard
           }
         } else {
           alert("Backend Error: " + data.error);
         }
       } catch (error) {
         console.error("API Error:", error);
-        alert("Django server band hai ya connect nahi ho raha.");
+        alert("Django server is offline or unreachable.");
       }
     } else {
       alert("Please enter 1234 as OTP");
     }
   };
+
   // Handles the final step of profile setup, including image uploads
   const handleProfileSetup = async (e) => {
     e.preventDefault();
@@ -112,9 +111,7 @@ const AuthPage = () => {
       return;
     }
 
-    // Inside handleProfileSetup function...
     const formData = new FormData();
-
     formData.append('user_id', userId);
     formData.append('first_name', firstName);
     formData.append('gender', selectedGender);
@@ -127,15 +124,12 @@ const AuthPage = () => {
     formData.append('dob', dob);
     formData.append('interested_in', selectedInterestGender);
 
-    // ... baaki ka code same rahega
-    formData.append('drinking_habit', drinking);
     // Convert the interests array into a comma-separated string for database storage
     if (selectedInterests.length > 0) {
       formData.append('interests', selectedInterests.join(', '));
     }
 
     // Append image files sequentially if they have been uploaded by the user
-    // Append all 6 image files if they exist
     photoFiles.forEach((file, index) => {
       if (file) {
         formData.append(`photo_${index + 1}`, file);
@@ -155,7 +149,7 @@ const AuthPage = () => {
       if (response.ok) {
         console.log("Profile Saved Successfully:", data.message);
         localStorage.setItem('isAuthenticated', 'true');
-        window.location.href = '/dashboard'; // <--- NAYA CODE
+        window.location.href = '/dashboard'; // Redirect to dashboard
       } else {
         alert("Failed to save profile: " + data.error);
       }
@@ -199,6 +193,7 @@ const AuthPage = () => {
       setPhotoFiles(newPhotoFiles);
     }
   };
+
   return (
     <div className="auth-wrapper">
       {/* LEFT SIDE: STICKY IMAGE */}
@@ -430,14 +425,13 @@ const AuthPage = () => {
         </div>
       </div>
 
-
-      {/* --- MODALS (Original auth.html Style) --- */}
+      {/* --- MODALS --- */}
       <div className="modal fade" id="interestModal" tabIndex="-1">
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content p-4 rounded-5 border-0">
             <h5 className="text-center fw-bold mb-1 font-heading">What are you into?</h5>
 
-            {/* Yeh raha aapka Dynamic Counter 👇 */}
+            {/* Dynamic Selection Counter 👇 */}
             <p className="text-center text-muted small mb-4">{selectedInterests.length}/7 selected</p>
 
             <div className="d-flex flex-wrap gap-2 justify-content-center tag-cloud-premium">

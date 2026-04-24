@@ -1,6 +1,8 @@
 /* =========================================
    PULSEDATE: VIP PREMIUM MODAL
 ========================================= */
+
+/* --- Overlay Background --- */
 .premium-overlay {
     position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
     background: rgba(15, 12, 25, 0.85);
@@ -10,6 +12,7 @@
     animation: fadeIn 0.3s ease-out forwards;
 }
 
+/* --- Modal Container --- */
 .premium-card {
     background: linear-gradient(145deg, #2b2142, #181226);
     border: 1px solid rgba(245, 183, 72, 0.3);
@@ -21,23 +24,23 @@
     animation: slideUp 0.4s 0.1s ease-out forwards;
 }
 
+/* --- Close Button --- */
 .close-premium {
     position: absolute; top: 20px; right: 25px;
-    font-size: 1.5rem; color: #888; cursor: pointer; transition: 0.3s;
+    font-size: 1.5rem; color: #aaa; cursor: pointer;
+    transition: color 0.3s;
 }
-.close-premium:hover { color: white; transform: rotate(90deg); }
+.close-premium:hover { color: white; }
 
-.vip-icon {
-    font-size: 3.5rem; color: #f5b748; margin-bottom: 15px;
-    text-shadow: 0 0 20px rgba(245, 183, 72, 0.5);
-}
-
+/* --- Header & Typography --- */
+.vip-icon { color: #f5b748; font-size: 3rem; margin-bottom: 10px; }
 .gold-text {
-    background: linear-gradient(to right, #f5b748, #ffe099, #f5b748);
+    background: linear-gradient(45deg, #f5b748, #f59e0b, #fbbf24);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     font-family: var(--font-heading); font-weight: 800; font-size: 2.2rem;
 }
 
+/* --- Premium Features List --- */
 .premium-features {
     text-align: left; margin: 30px 0; padding: 0 10px;
 }
@@ -46,7 +49,7 @@
 }
 .feature-check { color: #17e27a; font-size: 1.2rem; }
 
-/* Pricing Grid */
+/* --- Pricing Grid --- */
 .pricing-grid { display: flex; gap: 12px; margin-bottom: 30px; }
 .price-box {
     flex: 1; border: 2px solid #333; border-radius: 18px; padding: 20px 10px;
@@ -59,17 +62,21 @@
     box-shadow: 0 10px 20px rgba(245, 183, 72, 0.1);
 }
 .save-badge {
-    position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
-    background: #f5b748; color: #181226; font-size: 0.7rem; font-weight: 800;
-    padding: 3px 10px; border-radius: 10px; text-transform: uppercase; letter-spacing: 1px;
+    position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+    background: #f5b748; color: black; font-size: 0.7rem; font-weight: bold;
+    padding: 4px 8px; border-radius: 20px; white-space: nowrap;
 }
 
+/* --- Action Button --- */
 .btn-gold {
-    background: linear-gradient(45deg, #f5b748, #ffc966);
-    color: #181226; border: none; width: 100%; padding: 16px;
-    font-size: 1.2rem; font-weight: 800; border-radius: 30px;
-    cursor: pointer; transition: 0.3s; box-shadow: 0 8px 20px rgba(245, 183, 72, 0.3);
+    background: linear-gradient(45deg, #f5b748, #f59e0b);
+    color: black; border: none; width: 100%; padding: 15px;
+    border-radius: 30px; font-size: 1.1rem; font-weight: 800;
+    cursor: pointer; transition: transform 0.3s, box-shadow 0.3s;
 }
-.btn-gold:hover { transform: scale(1.05); box-shadow: 0 12px 25px rgba(245, 183, 72, 0.5); }
+.btn-gold:hover {
+    transform: translateY(-2px); box-shadow: 0 10px 20px rgba(245, 183, 72, 0.3);
+}
 
+/* --- Keyframe Animations --- */
 @keyframes slideUp { to { transform: translateY(0); opacity: 1; } }

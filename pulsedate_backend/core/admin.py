@@ -9,16 +9,16 @@ from .models import UserProfile, Swipe, Match, Message, BlockList
 # ==========================================
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
-    # Bahar list mein kya kya dikhega
+    # Columns visible in the list view
     list_display = ('id', 'first_name', 'phone_number', 'city', 'gender', 'is_premium_status', 'created_at')
     
-    # Right side mein filter karne ke options (Jaise sirf VIP users dekhna, ya sirf ladkiyan dekhna)
+    # Filter options on the right side (e.g., VIP only, specific genders)
     list_filter = ('is_premium', 'gender', 'intent', 'drinking_habit')
     
-    # Search bar (Naam ya phone number se dhoondhne ke liye)
+    # Search bar (Search by name or phone number)
     search_fields = ('first_name', 'phone_number', 'city')
     
-    # Data ko groups mein bantna taaki andar ka view clean lage
+    # Grouping fields to keep the detail view clean and organized
     fieldsets = (
         ('Basic Info', {
             'fields': ('phone_number', 'first_name', 'last_name', 'dob', 'gender')
@@ -27,63 +27,43 @@ class UserProfileAdmin(admin.ModelAdmin):
             'fields': ('city', 'college', 'job_title', 'drinking_habit', 'intent', 'interests', 'bio')
         }),
         ('VIP & Premium Control', {
-            'fields': ('is_premium', 'premium_expiry'),
-            'description': 'Yahan se aap manually kisi ko VIP bana sakte hain.'
+            'fields': ('is_premium', 'premium_expiry_date')
         }),
-        ('User Photos', {
-            'fields': ('profile_pic_1', 'profile_pic_2', 'profile_pic_3', 'profile_pic_4', 'profile_pic_5', 'profile_pic_6')
+        ('Photos', {
+            'fields': ('photo_1', 'photo_2', 'photo_3', 'photo_4', 'photo_5', 'photo_6')
         }),
     )
 
-    # Custom Badge for Premium Users
+    # Custom column to show tick/cross for Premium status in admin panel
     def is_premium_status(self, obj):
         if obj.is_premium:
-            return format_html('<span style="color: white; background: #f5b748; padding: 3px 10px; border-radius: 10px; font-weight: bold;">VIP 👑</span>')
-        return format_html('<span style="color: gray;">Free User</span>')
-    is_premium_status.short_description = "Account Status"
-
-    # --- ADMIN ACTIONS (Bulk actions) ---
-    actions = ['make_vip_1_month', 'remove_vip']
-
-    def make_vip_1_month(self, request, queryset):
-        expiry = timezone.now() + timedelta(days=30)
-        updated = queryset.update(is_premium=True, premium_expiry=expiry)
-        self.message_user(request, f"{updated} users ko 1 Month ka VIP de diya gaya hai! 🎉")
-    make_vip_1_month.short_description = "Grant 1 Month VIP 👑"
-
-    def remove_vip(self, request, queryset):
-        updated = queryset.update(is_premium=False, premium_expiry=None)
-        self.message_user(request, f"{updated} users se VIP wapas le liya gaya hai.")
-    remove_vip.short_description = "Remove VIP Access 🚫"
+            return format_html('<span style="color: green; font-weight: bold;">✔ VIP</span>')
+        return format_html('<span style="color: gray;">Regular</span>')
+    
+    # Column name for the custom column
+    is_premium_status.short_description = 'Premium Status'
 
 
 # ==========================================
-# 2. SAFETY & MODERATION (Reports & Blocks)
+# 2. BLOCKED USERS MANAGEMENT
 # ==========================================
 @admin.register(BlockList)
 class BlockListAdmin(admin.ModelAdmin):
-    list_display = ('blocker', 'blocked_user', 'timestamp', 'reason')
-    search_fields = ('blocker__first_name', 'blocked_user__first_name', 'blocker__phone_number')
+    list_display = ('id', 'blocker', 'blocked_user', 'timestamp')
+    search_fields = ('blocker__first_name', 'blocked_user__first_name')
     list_filter = ('timestamp',)
-    readonly_fields = ('timestamp',)
-    
-    # Custom display: Kaun kisko block kar raha hai
-    def get_queryset(self, request):
-        return super().get_queryset(request).select_related('blocker', 'blocked_user')
 
 
 # ==========================================
-# 3. SWIPE ACTIVITY MONITORING
+# 3. SWIPES MONITORING
 # ==========================================
 @admin.register(Swipe)
 class SwipeAdmin(admin.ModelAdmin):
-    list_display = ('swiper', 'swiped_on', 'swipe_type', 'timestamp')
+    list_display = ('id', 'swiper', 'target', 'swipe_type', 'timestamp')
+    search_fields = ('swiper__first_name', 'target__first_name')
     list_filter = ('is_like', 'is_superlike', 'timestamp')
-    search_fields = ('swiper__first_name', 'swiped_on__first_name')
-    
-    # Sirf dekhne ke liye, Admin swipe thodi na change karega
-    readonly_fields = ('swiper', 'swiped_on', 'is_like', 'is_superlike', 'timestamp')
 
+    # Custom column to show Like/Pass actions visually
     def swipe_type(self, obj):
         if obj.is_superlike:
             return format_html('<span style="color: #2196f3; font-weight: bold;">⭐ Super Like</span>')
@@ -105,7 +85,7 @@ class MatchAdmin(admin.ModelAdmin):
 
 
 # ==========================================
-# 5. CHAT MONITORING (Privacy Ke Saath)
+# 5. CHAT MONITORING (With Privacy)
 # ==========================================
 @admin.register(Message)
 class MessageAdmin(admin.ModelAdmin):
@@ -113,10 +93,5 @@ class MessageAdmin(admin.ModelAdmin):
     search_fields = ('sender__first_name', 'content')
     list_filter = ('timestamp', 'is_read', 'is_deleted')
     
-    # Privacy maintain karne ke liye, admin by default message edit nahi kar sakta
+    # Maintain privacy: Admin cannot edit messages by default
     readonly_fields = ('match', 'sender', 'content', 'image', 'timestamp')
-
-    # Agar admin app header ka naam change karna chahe:
-    admin.site.site_header = "PulseDate Super Admin 🚀"
-    admin.site.site_title = "PulseDate Control Panel"
-    admin.site.index_title = "Welcome to PulseDate Dashboard"

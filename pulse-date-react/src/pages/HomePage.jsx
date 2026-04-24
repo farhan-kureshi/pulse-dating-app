@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import './HomePage.css';
 
 const HomePage = () => {
-  // 1. State check karegi ki is session mein pehle load hua hai ya nahi
+  // 1. Check if the page has already been loaded in this session to manage the preloader
   const [loading, setLoading] = useState(() => {
     return !sessionStorage.getItem('pulseDateLoaded');
   });
@@ -13,7 +13,7 @@ const HomePage = () => {
 
     // --- Preloader Logic ---
     if (loading) {
-      // Agar pehli baar aaye hain, toh 2 second wala loader chalega
+      // Show the 2-second preloader if this is the user's first visit
       timer1 = setTimeout(() => {
         const preloader = document.getElementById('preloader');
         if (preloader) {
@@ -22,18 +22,18 @@ const HomePage = () => {
         }
         timer2 = setTimeout(() => {
           setLoading(false);
-          sessionStorage.setItem('pulseDateLoaded', 'true'); // Browser ko yaad dila diya
+          sessionStorage.setItem('pulseDateLoaded', 'true'); // Save load status in browser session
         }, 800);
       }, 2000);
     } else {
-      // Agar page pehle load ho chuka hai (Back aane par), toh turant hide kardo
+      // Immediately hide the preloader if the page was already loaded (e.g., navigating back)
       const preloader = document.getElementById('preloader');
       if (preloader) {
         preloader.style.display = 'none'; 
       }
     }
 
-    // --- Scroll Animation Logic (Yeh hamesha chalega) ---
+    // --- Scroll Animation Logic (Always active) ---
     const observerOptions = { root: null, rootMargin: '0px', threshold: 0.15 };
     const observer = new IntersectionObserver((entries, obs) => {
       entries.forEach(entry => {
@@ -47,7 +47,7 @@ const HomePage = () => {
     const elementsToAnimate = document.querySelectorAll('.scroll-animate');
     elementsToAnimate.forEach(element => observer.observe(element));
 
-    // Cleanup memory
+    // Cleanup memory to prevent memory leaks
     return () => {
       if (timer1) clearTimeout(timer1);
       if (timer2) clearTimeout(timer2);
@@ -114,7 +114,6 @@ const HomePage = () => {
       {/* 4. MIDDLE CONTENT */}
       <section className="feature-section text-center scroll-animate reveal-up">
         <div className="container">
-          {/* Aesthetic Text Fix: SVG removed, Italic Accent added */}
           <h2 className="font-heading fw-bold" style={{ fontSize: 'clamp(3rem, 5vw, 4.5rem)', letterSpacing: '-1px' }}>
             Go on your first date.
           </h2>

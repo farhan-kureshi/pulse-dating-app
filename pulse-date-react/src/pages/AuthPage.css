@@ -5,7 +5,7 @@
 /* --- Core Wrapper & Scroll Fix --- */
 body, html { 
     margin: 0; padding: 0; 
-    overflow-x: hidden; /* Yeh horizontal scroll ko rokta hai */
+    overflow-x: hidden; /* Prevents horizontal scrolling */
     width: 100%; 
     font-family: var(--font-text);
 }
@@ -31,8 +31,8 @@ body, html {
 /* --- Right Side: Scrollable Form Area --- */
 .auth-right {
     flex: 1; display: flex; flex-direction: column; 
-    align-items: center; justify-content: flex-start; /* Top se start hoga */
-    background-color: white; height: 100vh; overflow-y: auto; /* Sirf right side scroll hogi */
+    align-items: center; justify-content: flex-start; /* Aligns content to start from the top */
+    background-color: white; height: 100vh; overflow-y: auto; /* Enables vertical scrolling for the right side only */
 }
 .form-container { width: 100%; max-width: 420px; padding: 60px 20px; margin: 0 auto; }
 
@@ -126,6 +126,7 @@ input:-webkit-autofill {
 
 /* Media Query */
 @media (min-width: 992px) { .auth-left { display: block; } }
+
 /* --- Premium Custom Scrollbar --- */
 .auth-right::-webkit-scrollbar {
     width: 6px;

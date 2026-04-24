@@ -13,6 +13,7 @@ const PremiumModal = ({ onClose, onPay }) => {
                 <h1 className="gold-text">PulseDate VIP</h1>
                 <p className="text-white-50 mt-2">Stop guessing. See who likes you immediately.</p>
 
+                {/* --- Premium Features List --- */}
                 <div className="premium-features">
                     <p><i className="fa-solid fa-eye feature-check"></i> See everyone who liked you</p>
                     <p><i className="fa-solid fa-bolt feature-check"></i> 5 Free Super Likes a week</p>
@@ -20,6 +21,7 @@ const PremiumModal = ({ onClose, onPay }) => {
                     <p><i className="fa-solid fa-plane feature-check"></i> Passport: Match anywhere in the world</p>
                 </div>
 
+                {/* --- Subscription Pricing Grid --- */}
                 <div className="pricing-grid">
                     <div className={`price-box ${selectedPlan === '1month' ? 'active' : ''}`} onClick={() => setSelectedPlan('1month')}>
                         <div className="text-white-50 small fw-bold mb-1">1 Month</div>
@@ -42,7 +44,7 @@ const PremiumModal = ({ onClose, onPay }) => {
                     </div>
                 </div>
 
-                {/* 👇 NAYA: Yahan alert hata kar onPay laga diya hai 👇 */}
+                {/* --- Trigger the payment workflow with the selected plan --- */}
                 <button className="btn-gold" onClick={() => onPay(selectedPlan)}>
                     Upgrade Now
                 </button>

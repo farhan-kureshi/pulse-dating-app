@@ -10,11 +10,12 @@ const AdminDashboard = () => {
     const [swipeLogs, setSwipeLogs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [transactions, setTransactions] = useState([]);
-    // ... baaki states (loading, users, etc)
-    const [isCollapsed, setIsCollapsed] = useState(false); // Desktop par patla karne ke liye
-    const [isMobileOpen, setIsMobileOpen] = useState(false); // Mobile par kholne ke liye
+    
+    // UI states
+    const [isCollapsed, setIsCollapsed] = useState(false); // To toggle sidebar collapse on desktop
+    const [isMobileOpen, setIsMobileOpen] = useState(false); // To toggle sidebar on mobile
 
-    // --- 1. SABSE PEHLE FETCH FUNCTIONS (useEffect ke bahar) ---
+    // --- 1. FETCH FUNCTIONS (Outside useEffect) ---
     const fetchAdminData = async () => {
         try {
             const response = await fetch('http://127.0.0.1:8000/api/admin-data/');
@@ -47,7 +48,7 @@ const AdminDashboard = () => {
         } catch (error) { console.error("Swipe Logs Error:", error); }
     };
 
-    // --- 2. AB SIRF EK SAFAI WALA useEffect ---
+    // --- 2. CLEAN useEffect HOOK ---
     useEffect(() => {
         const loadAllData = async () => {
             setLoading(true);
@@ -66,6 +67,7 @@ const AdminDashboard = () => {
     const handleLogout = () => {
         window.location.href = '/';
     };
+
     // --- REAL DATABASE ACTIONS ---
     const toggleVIP = async (userId) => {
         try {
@@ -76,20 +78,21 @@ const AdminDashboard = () => {
             });
 
             if (res.ok) {
-                // 1. Pehle users ki list update karo (Badge change ke liye)
+                // 1. Update users list first (For badge change)
                 setUsers(users.map(u => u.id === userId ? { ...u, is_premium: !u.is_premium } : u));
 
-                // 👇 YAHAN HAI ASLI JADU 👇
-                // 2. Turant Finance table ka naya data laao
+                // 👇 REAL-TIME UPDATE MAGIC 👇
+                // 2. Fetch new finance data immediately
                 await fetchFinanceData();
 
-                // 3. Stats (Revenue/VIP Count) bhi update karlo
+                // 3. Update Stats (Revenue/VIP Count) as well
                 await fetchAdminData();
 
                 console.log("Finance and Stats updated in real-time! 🚀");
             }
         } catch (error) { console.error("VIP Toggle Error:", error); }
     };
+
     const toggleVerify = async (userId) => {
         try {
             const res = await fetch('http://127.0.0.1:8000/api/admin/toggle-verify/', {
@@ -100,11 +103,12 @@ const AdminDashboard = () => {
             if (res.ok) {
                 setUsers(users.map(u => u.id === userId ? { ...u, is_verified: !u.is_verified } : u));
 
-                // 👇 YAHAN CHANGE KIYA HAI: Stats refresh karo 👇
+                // Refresh stats upon verification update
                 fetchAdminData();
             }
         } catch (error) { console.error("Verify Toggle Error:", error); }
     };
+
     const toggleBlock = async (userId, isBanned) => {
         const actionText = isBanned ? "UNBLOCK" : "BLOCK";
         if (window.confirm(`Are you sure you want to ${actionText} this user?`)) {
@@ -120,6 +124,7 @@ const AdminDashboard = () => {
             } catch (error) { console.error("Block Toggle Error:", error); }
         }
     };
+
     // --- DELETE USER LOGIC ---
     const deleteUser = async (userId, userName) => {
         const confirmDelete = window.confirm(`DANGER! ⚠️ Are you sure you want to permanently delete ${userName}? This will erase all their matches, messages, and photos. This CANNOT be undone!`);
@@ -135,7 +140,7 @@ const AdminDashboard = () => {
                     alert(`${userName} has been permanently deleted.`);
                     setUsers(users.filter(u => u.id !== userId));
 
-                    // 👇 YAHAN CHANGE KIYA HAI: Delete hone ke baad stats aur finance update karo 👇
+                    // Update stats and finance after successful deletion
                     fetchAdminData();
                     fetchFinanceData();
                 } else {
@@ -144,13 +149,13 @@ const AdminDashboard = () => {
             } catch (error) { console.error("Delete Toggle Error:", error); }
         }
     };
+
     return (
         <div className="admin-layout">
-            {/* 👇 NAYA: Sidebar mein classes add ki hain 👇 */}
+            {/* Added classes to control sidebar collapse state */}
             <aside className={`admin-sidebar ${isCollapsed ? 'collapsed' : ''} ${isMobileOpen ? 'mobile-open' : ''}`}>
 
-                {/* 👇 NAYA: 3-lines icon ab ekdum LEFT KONE mein aa gaya 👇 */}
-           {/* 👇 NAYA: Inline styling hata di, sab CSS se control karenge 👇 */}
+                {/* Hamburger icon moved to the far left, removed inline styling for CSS control */}
                 <div className="admin-brand">
                     <div className="admin-menu-toggle d-none d-lg-flex" onClick={() => setIsCollapsed(!isCollapsed)}>
                         <i className="fa-solid fa-bars text-white"></i>
@@ -162,7 +167,7 @@ const AdminDashboard = () => {
                     <i className="fa-solid fa-xmark d-lg-none ms-auto text-white" style={{ cursor: 'pointer' }} onClick={() => setIsMobileOpen(false)}></i>
                 </div>
 
-                {/* 👇 NAYA: Text ko <span> ke andar daala taaki hide kar sakein 👇 */}
+                {/* Wrapped text in <span> for hide functionality during collapse */}
                 <div className={`admin-nav-item ${activeTab === 'dashboard' ? 'active' : ''}`} onClick={() => { setActiveTab('dashboard'); setIsMobileOpen(false); }}>
                     <i className="fa-solid fa-chart-pie"></i> <span className="nav-text">Overview</span>
                 </div>
@@ -185,7 +190,7 @@ const AdminDashboard = () => {
                 <div className="admin-header">
                     <div className="d-flex align-items-center gap-3">
 
-                        {/* 👇 Desktop wala yahan se hata diya, ab sirf Mobile ke liye rakha hai 👇 */}
+                        {/* Kept desktop toggle in the sidebar, this is only for mobile */}
                         <div
                             className="admin-menu-toggle d-lg-none"
                             onClick={() => setIsMobileOpen(true)}
@@ -201,7 +206,6 @@ const AdminDashboard = () => {
                         <img src="/pulseicon.jpeg" style={{ width: '45px', height: '45px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #f5b748' }} alt="Admin" />
                     </div>
                 </div>
-                {/* ... iske neeche aapke baaki Tabs ka code (stats-grid wagera) waisa hi rahega ... */}
 
                 {/* --- TAB 1: OVERVIEW --- */}
                 {activeTab === 'dashboard' && (
@@ -223,7 +227,7 @@ const AdminDashboard = () => {
                                 <div className="stat-icon" style={{ backgroundColor: 'rgba(34, 197, 94, 0.1)', color: '#22c55e' }}><i className="fa-solid fa-indian-rupee-sign"></i></div>
                                 <div className="stat-info"><p>Total Revenue</p><h3>{loading ? '...' : stats.revenue}</h3></div>
                             </div>
-                            {/* NAYA DAU CARD */}
+                            {/* DAU CARD */}
                             <div className="stat-card">
                                 <div className="stat-icon" style={{ backgroundColor: 'rgba(16, 185, 129, 0.1)', color: '#10b981' }}><i className="fa-solid fa-chart-line"></i></div>
                                 <div className="stat-info"><p>Daily Active</p><h3>{loading ? '...' : stats.dau}</h3></div>
@@ -263,7 +267,7 @@ const AdminDashboard = () => {
                     <div className="admin-table-container fade-in" style={{ backgroundColor: '#1e293b', padding: '25px', borderRadius: '16px', border: '1px solid #334155' }}>
                         <h4 style={{ color: '#f8fafc', fontWeight: '700', marginBottom: '20px' }}>Real User Database</h4>
                         {loading ? (
-                            <div className="text-center p-5 text-muted">Loading real users from Django Database...</div>
+                            <div className="text-center p-5 text-muted">Loading real users from Database...</div>
                         ) : (
                             <table className="admin-table" style={{ width: '100%', color: '#f8fafc' }}>
                                 <thead>
@@ -308,7 +312,6 @@ const AdminDashboard = () => {
                                                     >
                                                         <i className="fa-solid fa-crown"></i>
                                                     </button>
-                                                    {/* NAYA VERIFY BUTTON */}
                                                     <button
                                                         className="btn btn-sm me-2"
                                                         style={{ backgroundColor: user.is_verified ? 'rgba(59, 130, 246, 0.1)' : 'transparent', color: '#3b82f6', border: '1px solid #3b82f6' }}
@@ -329,14 +332,13 @@ const AdminDashboard = () => {
                                                     >
                                                         {user.is_banned ? <i className="fa-solid fa-unlock"></i> : <i className="fa-solid fa-ban"></i>}
                                                     </button>
-                                                    {/* NAYA DELETE BUTTON */}
                                                     <button
                                                         className="btn btn-sm"
                                                         style={{
                                                             backgroundColor: 'rgba(239, 68, 68, 0.1)',
                                                             color: '#ef4444',
                                                             border: '1px solid #ef4444',
-                                                            marginLeft: '5px' // Thoda gap dene ke liye
+                                                            marginLeft: '5px' // To provide some spacing
                                                         }}
                                                         title="Delete User Permanently"
                                                         onClick={() => deleteUser(user.id, user.name)}
@@ -352,7 +354,8 @@ const AdminDashboard = () => {
                         )}
                     </div>
                 )}
-                {/* manage users  */}
+
+                {/* --- TAB 3: FINANCE LOGS --- */}
                 {activeTab === 'finance' && (
                     <div className="admin-table-container fade-in">
                         <h4 style={{ color: '#f8fafc', fontWeight: '700', marginBottom: '20px' }}>VIP Transaction Logs</h4>
@@ -380,7 +383,8 @@ const AdminDashboard = () => {
                         </table>
                     </div>
                 )}
-                {/* --- TAB 3: REAL SWIPE LOGS --- */}
+
+                {/* --- TAB 4: SWIPE LOGS --- */}
                 {activeTab === 'matches' && (
                     <div className="admin-table-container fade-in" style={{ backgroundColor: '#1e293b', padding: '25px', borderRadius: '16px', border: '1px solid #334155' }}>
                         <h4 style={{ color: '#f8fafc', fontWeight: '700', marginBottom: '20px' }}>Live Activity Stream</h4>
@@ -411,7 +415,6 @@ const AdminDashboard = () => {
                                                 {log.is_match ? (
                                                     <span className="badge bg-success rounded-pill" style={{ padding: '6px 12px' }}>Matched 🤝</span>
                                                 ) : (
-                                                    // 👇 YAHAN CHANGE KIYA HAI: Light slate color ka badge bana diya 👇
                                                     <span style={{ backgroundColor: 'rgba(148, 163, 184, 0.1)', color: '#94a3b8', padding: '6px 12px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: '600' }}>
                                                         No Match
                                                     </span>

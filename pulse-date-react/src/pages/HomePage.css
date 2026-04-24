@@ -11,7 +11,7 @@
 
 /* --- 1. Premium Glassmorphism Navbar (Sticky) --- */
 .aesthetic-nav {
-    position: fixed !important; /* Ab navbar top par fix rahega */
+    position: fixed !important; /* Navbar remains fixed at the top */
     top: 0; width: 100%; z-index: 1000;
     background: rgba(250, 249, 247, 0.75) !important; /* Semi-transparent */
     backdrop-filter: blur(15px); /* Gen Z Frosted Glass Effect */

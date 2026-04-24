@@ -11,7 +11,7 @@
 /* Sidebar Styling */
 .admin-sidebar {
     width: 250px;
-    /* 👈 Pehle 280px tha, isko chhota kiya */
+    /* Reduced from 280px */
     background-color: #1e293b;
     padding: 20px;
     display: flex;
@@ -70,7 +70,7 @@
 .admin-main {
     flex: 1;
     padding: 30px;
-    /* 👈 Pehle 40px tha */
+    /* Reduced from 40px */
     overflow-y: auto;
 }
 
@@ -91,22 +91,22 @@
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    /* 👈 Pehle 240px tha. Ise 180px karne se 5 cards ek line me aayenge! */
+    /* Reduced from 240px to 180px to fit 5 cards in a row! */
     gap: 20px;
-    /* 👈 Gap thoda kam kiya */
+    /* Reduced gap */
     margin-bottom: 30px;
 }
 
 .stat-card {
     background-color: #1e293b;
     padding: 20px;
-    /* 👈 Pehle 25px tha */
+    /* Reduced from 25px */
     border-radius: 16px;
     border: 1px solid #334155;
     display: flex;
     align-items: center;
     gap: 15px;
-    /* 👈 Gap 20px se 15px kiya */
+    /* Reduced gap from 20px to 15px */
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s;
 }
@@ -118,21 +118,21 @@
 
 .stat-icon {
     width: 50px;
-    /* 👈 Pehle 60px tha */
+    /* Reduced from 60px */
     height: 50px;
     border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.5rem;
-    /* 👈 Icon size thoda chhota kiya */
+    /* Reduced icon size slightly */
 }
 
 .stat-info p {
     margin: 0;
     color: #cbd5e1;
     font-size: 0.8rem;
-    /* 👈 Font size chhota kiya */
+    /* Reduced font size */
     font-weight: 600;
     text-transform: uppercase;
 }
@@ -140,7 +140,7 @@
 .stat-info h3 {
     margin: 5px 0 0;
     font-size: 1.5rem;
-    /* 👈 Pehle 1.8rem tha */
+    /* Reduced from 1.8rem */
     font-weight: 800;
     color: #fff;
 }
@@ -278,19 +278,19 @@
     z-index: 1000;
 }
 
-/* Jab sidebar patla ho jayega */
+/* When sidebar is collapsed */
 .admin-sidebar.collapsed {
     width: 90px !important;
     padding: 20px 10px;
 }
 
-/* Patle hone par text chupao */
+/* Hide text on collapse */
 .admin-sidebar.collapsed .nav-text,
 .admin-sidebar.collapsed .admin-brand-text {
     display: none;
 }
 
-/* Patle hone par Icons ko center me lao */
+/* Center icons on collapse */
 .admin-sidebar.collapsed .admin-nav-item {
     justify-content: center;
     padding: 15px 0;
@@ -305,12 +305,12 @@
     justify-content: center;
 }
 
-/* 3-Line Button ki styling (Updated for App-like look) */
+/* Hamburger Menu styling (Updated for App-like look) */
 .admin-menu-toggle {
     cursor: pointer;
     padding: 5px;
     background: transparent;
-    /* 👈 Box/Background hata diya */
+    /* Removed Box/Background */
     transition: 0.3s;
     display: flex;
     align-items: center;
@@ -319,11 +319,11 @@
 
 .admin-menu-toggle i {
     font-size: 1.6rem !important;
-    /* 👈 Icon ko thoda bada aur prominent kiya */
+    /* Made icon larger and more prominent */
     color: #ffffff;
 }
 
-/* Hover karne par halka sa fade hoga, dabba nahi aayega */
+/* Slight fade on hover, no background box */
 .admin-menu-toggle:hover i {
     opacity: 0.7;
 }
@@ -333,23 +333,23 @@
 ========================================= */
 @media (max-width: 992px) {
 
-    /* Mobile me Sidebar chupa do (Off-canvas) */
+    /* Hide Sidebar on mobile (Off-canvas) */
     .admin-sidebar {
         position: fixed;
         left: -100%;
         top: 0;
         height: 100vh;
         width: 280px !important;
-        /* Mobile me hamesha lamba rahega */
+        /* Always full height on mobile */
         box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
     }
 
-    /* Jab button dabe toh bahar aao */
+    /* Slide out on button click */
     .admin-sidebar.mobile-open {
         left: 0;
     }
 
-    /* Mobile par text hamesha dikhega */
+    /* Text always visible on mobile */
     .admin-sidebar.collapsed .nav-text,
     .admin-sidebar.collapsed .admin-brand-text {
         display: inline-block;
@@ -363,21 +363,21 @@
     /* Main Area Adjustments */
     .admin-main {
         padding: 20px 15px;
-        /* Padding kam kardi */
+        /* Reduced padding */
         width: 100vw;
     }
 
     .admin-header h2 {
         font-size: 1.3rem;
-        /* Header chhota kiya */
+        /* Reduced header size */
     }
 
     .welcome-text {
         display: none;
-        /* Mobile pe jagah nahi hoti toh text hata diya */
+        /* Hidden text on mobile to save space */
     }
 
-    /* Stats Dabbe chote kardiye */
+    /* Scaled down stat cards */
     .stats-grid {
         grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
         gap: 15px;
@@ -400,34 +400,35 @@
 
 /* --- MOBILE TABLE FIXES --- */
 
-/* 1. Table ko dabne se roko aur scrollable banao */
+/* 1. Prevent table squishing and make it scrollable */
 .admin-table-container {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    /* Mobile par smooth scroll ke liye */
+    /* For smooth scrolling on mobile */
 }
 
 .admin-table {
     min-width: 600px;
-    /* Table ki kam se kam chaurai fix kar di */
+    /* Fixed minimum width for the table */
 }
 
-/* 2. Badge text ko ek line mein force karo */
+/* 2. Force badge text into a single line */
 .vip-badge {
     white-space: nowrap !important;
     display: inline-block;
 }
 
-/* Jab sidebar patla ho, toh logo aur text chupa do, sirf 3-lines dikhao */
+/* Hide logo and text on collapse, show only hamburger menu */
 .admin-sidebar.collapsed .admin-brand-text,
 .admin-sidebar.collapsed .brand-logo {
     display: none;
 }
 
-/* Patle hone par 3-lines ko center mein lane ke liye */
+/* Center the hamburger menu on collapse */
 .admin-sidebar.collapsed .admin-brand {
     justify-content: center !important;
 }
+
 /* --- BRAND HEADER PERFECT ALIGNMENT --- */
 .admin-brand {
     display: flex !important;
@@ -446,7 +447,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0; /* Extra padding hatayi */
+    padding: 0; /* Removed extra padding */
 }
 
 .admin-brand-text {
@@ -455,7 +456,7 @@
     color: #f5b748;
     white-space: nowrap !important; 
     margin: 0 !important;
-    /* 👇 YEH 2 LINES JADU KARENGI 👇 */
-    line-height: 1 !important; /* Invisible padding khatam karega */
-    transform: translateY(3px); /* Text ko 3 pixel thoda neeche dhakel dega logo ke barabar lane ke liye */
+    /* 👇 ALIGNMENT MAGIC FIX 👇 */
+    line-height: 1 !important; /* Removes invisible padding */
+    transform: translateY(3px); /* Pushes text down by 3 pixels to align perfectly with the logo */
 }

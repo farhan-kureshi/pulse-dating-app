@@ -22,7 +22,7 @@ const DashboardPage = () => {
     // Basic Info
     const [userName, setUserName] = useState("Loading...");
     const [editLastName, setEditLastName] = useState("");
-    const [userMobile, setUserMobile] = useState(""); // Mobile usually change nahi hota par dikha sakte hain
+    const [userMobile, setUserMobile] = useState(""); 
     const [editDob, setEditDob] = useState("");
     const [mainDp, setMainDp] = useState("/default-avatar.png");
     const [editBio, setEditBio] = useState("");
@@ -40,18 +40,18 @@ const DashboardPage = () => {
     // Photos (Initialized as empty/null, no dummy photos)
     const [editPhotos, setEditPhotos] = useState([null, null, null, null, null, null]);
     const [editPhotoFiles, setEditPhotoFiles] = useState([null, null, null, null, null, null]);
-    const [isCollapsed, setIsCollapsed] = useState(false); // Sidebar toggle ke liye
-    const [searchQuery, setSearchQuery] = useState(""); // Search bar ke liye
+    const [isCollapsed, setIsCollapsed] = useState(false);
+    const [searchQuery, setSearchQuery] = useState(""); 
 
     // --- CHAT STATES (NAYE) ---
-    const [chatMessages, setChatMessages] = useState([]); // Database ke messages store karne ke liye
-    const [newMessageText, setNewMessageText] = useState(""); // Input box mein jo type hoga uske liye
+    const [chatMessages, setChatMessages] = useState([]); ye
+    const [newMessageText, setNewMessageText] = useState(""); 
     const [selectedImage, setSelectedImage] = useState(null);
     const [selectedImages, setSelectedImages] = useState([]);
     const fileInputRef = useRef(null);
 
     const [activeChatList, setActiveChatList] = useState([]);
-    const [chatSocket, setChatSocket] = useState(null); // WebSocket store karne ke liye
+    const [chatSocket, setChatSocket] = useState(null); 
 
     const [isOtherUserTyping, setIsOtherUserTyping] = useState(false);
     const [isOtherUserOnline, setIsOtherUserOnline] = useState(false);
@@ -64,14 +64,14 @@ const DashboardPage = () => {
     const peerRef = useRef(null);
     const localStreamRef = useRef(null);
 
-    const [callType, setCallType] = useState('video'); // Track karega ki call Audio hai ya Video
+    const [callType, setCallType] = useState('video'); 
 
     // --- AUDIO & RINGTONE REFS ---
-    const ringtoneRef = useRef(new Audio('/ringtone.mp3')); // Call ke liye
-    const msgToneRef = useRef(new Audio('/msg_tone.mp3'));   // Message ke liye
-    const [zoomImage, setZoomImage] = useState(null); // 👈 Badi image dikhane ke liye
-    const prevUnreadCountRef = useRef(0); // Puraane unread messages yaad rakhne ke liye
-    const [activeMsgId, setActiveMsgId] = useState(null); // Kis message par click hua hai
+    const ringtoneRef = useRef(new Audio('/ringtone.mp3')); // Incoming call 
+    const msgToneRef = useRef(new Audio('/msg_tone.mp3'));   // Message 
+    const [zoomImage, setZoomImage] = useState(null); // Photo zoom 
+    const prevUnreadCountRef = useRef(0); // 
+    const [activeMsgId, setActiveMsgId] = useState(null); // Active message for reaction/delete menu
 
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
@@ -149,8 +149,7 @@ const DashboardPage = () => {
     }, []);
 
     // --- FETCH DISCOVERY PROFILES (Baaqi Logon Ka Data) ---
-
-    // 1. Function ko bahar nikala gaya hai (Bina kisi outer useEffect ke)
+// 1. Extracted function outside (Without any outer useEffect)
     const fetchDiscoveryProfiles = async () => {
         setLoadingProfiles(true);
         const userId = localStorage.getItem('user_id');
