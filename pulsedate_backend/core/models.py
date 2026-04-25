@@ -101,4 +101,15 @@ class Transaction(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user.first_name} - ₹{self.amount}"    
+        return f"{self.user.first_name} - ₹{self.amount}"      
+    
+    
+    
+# models.py ke sabse end mein paste karein
+class OTPRecord(models.Model):
+    phone_number = models.CharField(max_length=15, unique=True)
+    otp = models.CharField(max_length=4)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.phone_number} - {self.otp}"   

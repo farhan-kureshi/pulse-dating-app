@@ -1,0 +1,157 @@
+/* =========================================
+   PULSEDATE: SAFETY PAGE (3D & PREMIUM)
+========================================= */
+
+.safety-wrapper {
+    background-color: #f8fafc; /* Cool slate background for trust */
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+    perspective: 1000px; /* Essential for 3D effect */
+}
+
+/* --- Navbar --- */
+.safety-navbar {
+    position: fixed;
+    top: 0; width: 100%;
+    background: rgba(248, 250, 252, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    z-index: 1000;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.back-btn-safety {
+    width: 45px; height: 45px;
+    background: white; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #1e293b; font-size: 1.2rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+}
+.back-btn-safety:hover {
+    transform: translateX(-5px);
+    background: #3b82f6; /* Trust Blue */
+    color: white;
+}
+
+/* --- Hero Section --- */
+.safety-hero {
+    padding: 180px 20px 80px 20px;
+    background: radial-gradient(circle at top, rgba(59, 130, 246, 0.08) 0%, rgba(248, 250, 252, 0) 70%);
+}
+
+.badge-shield {
+    display: inline-block;
+    padding: 8px 22px;
+    background: #eff6ff;
+    color: #2563eb;
+    font-weight: 700;
+    border-radius: 30px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    border: 1px solid #bfdbfe;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.15);
+}
+
+.safety-title {
+    font-size: clamp(3.2rem, 5vw, 5rem);
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.1;
+    letter-spacing: -1.5px;
+}
+
+.text-blue-gradient {
+    background: linear-gradient(45deg, #2563eb, #06b6d4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.safety-subtitle {
+    font-size: 1.15rem;
+    color: #64748b;
+    line-height: 1.7;
+    max-width: 650px;
+}
+
+/* --- 3D Feature Cards --- */
+.safety-features {
+    padding: 40px 0 100px 0;
+}
+
+.safety-card-3d {
+    background: white;
+    padding: 40px;
+    border-radius: 24px;
+    height: 100%;
+    border: 1px solid rgba(0,0,0,0.03);
+    /* Framer motion handles the 3D hover state */
+}
+
+.safety-icon-wrapper {
+    width: 65px; height: 65px;
+    border-radius: 18px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.8rem;
+    margin-bottom: 25px;
+    color: white;
+}
+
+/* Glowing Themes for Icons */
+.blue-glow { background: #3b82f6; box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3); }
+.purple-glow { background: #8b5cf6; box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3); }
+.green-glow { background: #10b981; box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3); }
+.red-glow { background: #ef4444; box-shadow: 0 10px 20px rgba(239, 68, 68, 0.3); }
+
+.safety-card-3d h3 {
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 15px;
+    font-size: 1.4rem;
+}
+
+.safety-card-3d p {
+    color: #64748b;
+    line-height: 1.6;
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* --- CTA Section --- */
+.safety-cta {
+    padding: 40px 20px 100px 20px;
+}
+
+.cta-box {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    padding: 60px 40px;
+    border-radius: 30px;
+    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.3);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.btn-emergency {
+    background: transparent;
+    color: white;
+    border: 2px solid white;
+    padding: 14px 35px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    transition: all 0.3s;
+}
+
+.btn-emergency:hover {
+    background: white;
+    color: #0f172a;
+    transform: translateY(-3px);
+}
+
+/* --- Mobile Fixes --- */
+@media (max-width: 768px) {
+    .safety-hero { padding-top: 130px; }
+    .safety-card-3d { padding: 30px; }
+    .cta-box { padding: 40px 20px; }
+}

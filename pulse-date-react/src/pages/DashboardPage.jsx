@@ -44,7 +44,7 @@ const DashboardPage = () => {
     const [searchQuery, setSearchQuery] = useState(""); 
 
     // --- CHAT STATES (NAYE) ---
-    const [chatMessages, setChatMessages] = useState([]); ye
+    const [chatMessages, setChatMessages] = useState([]);
     const [newMessageText, setNewMessageText] = useState(""); 
     const [selectedImage, setSelectedImage] = useState(null);
     const [selectedImages, setSelectedImages] = useState([]);
@@ -156,7 +156,7 @@ const DashboardPage = () => {
         if (!userId) return;
 
         try {
-            // URL mein Age aur Gender pass kar rahe hain
+         // Passing Age and Gender in the URL
             const response = await fetch(`http://127.0.0.1:8000/api/discovery/${userId}/?age=${age}&gender=${preferredGender}`);
             const data = await response.json();
 
@@ -172,7 +172,7 @@ const DashboardPage = () => {
         }
     };
 
-    // 2. useEffect alag se likha gaya hai (Function ke niche)
+// 2. useEffect is written separately (Below the function)
     useEffect(() => {
         fetchDiscoveryProfiles();
     }, []);
@@ -189,7 +189,7 @@ const DashboardPage = () => {
                 const data = await response.json();
 
                 if (response.ok) {
-                    setSidebarData(data); // Asli Matches aur Likes save ho gaye!
+                    setSidebarData(data);// Real Matches and Likes saved!
                 }
             } catch (error) {
                 console.error("Sidebar Fetch Error:", error);
@@ -357,7 +357,7 @@ const DashboardPage = () => {
     };
 
 
-    // --- REAL SWIPE ALGORITHM ---
+// --- REAL SWIPE ALGORITHM ---
     const handleSwipe = async (direction) => {
         setSwipeDirection(`swipe-${direction}`); // Animation start
 
@@ -368,7 +368,7 @@ const DashboardPage = () => {
         // Backend API Call (Data Saving)
         if (userId && swipedProfile) {
             const isLike = (direction === 'right' || direction === 'up');
-            const isSuperLike = (direction === 'up'); // 👇 NAYA: Check karo kya up swipe tha?
+            const isSuperLike = (direction === 'up');
 
             try {
                 const response = await fetch('http://127.0.0.1:8000/api/swipe/', {
@@ -378,14 +378,14 @@ const DashboardPage = () => {
                         swiper_id: userId,
                         swiped_on_id: swipedProfile.id,
                         is_like: isLike,
-                        is_superlike: isSuperLike // 👇 NAYA: Database ko batao
+                        is_superlike: isSuperLike 
                     })
                 });
 
                 const data = await response.json();
 
                 if (response.ok && data.match) {
-                    isMatch = true; // Backend ne bataya ki dono ne ek dusre ko Like kiya hai!
+                    isMatch = true; 
                     setMatchedProfile(swipedProfile);
                 }
             } catch (error) {
@@ -401,12 +401,19 @@ const DashboardPage = () => {
                 setSwipeDirection(null);
                 setPhotoIndex(0);
 
-                // 👇 NAYA: Agar 'Liked You' wali profile ko pass kar diya, toh wapas normal cards par aa jao
                 if (selectedLikedProfile) {
                     setSelectedLikedProfile(null);
-                } else {
-                    setProfileIndex((prev) => (prev + 1) % profiles.length);
                 }
+                
+                // 👇 ASLI FIX: Jis profile ko swipe kiya, usko React ki list se HATA do 👇
+                setProfiles((prevProfiles) => {
+                    const newProfiles = prevProfiles.filter(p => p.id !== swipedProfile.id);
+                    // Agar array chhota ho gaya hai, toh index ko fix karo taaki error na aaye
+                    if (profileIndex >= newProfiles.length) {
+                        setProfileIndex(0);
+                    }
+                    return newProfiles;
+                });
             }
         }, 400);
     };
@@ -429,17 +436,26 @@ const DashboardPage = () => {
             setProfileIndex((prev) => (prev - 1 + profiles.length) % profiles.length);
         }
     };
-    // Match screen band hone ke baad agle profile par jana
+
+// Match screen band hone ke baad agle profile par jana
     const closeCelebration = () => {
         setShowMatch(false);
         setTimeout(() => {
             setSwipeDirection(null);
             setPhotoIndex(0);
-            setSelectedLikedProfile(null); // 👈 NAYI LINE
-            setProfileIndex((prev) => (prev + 1) % profiles.length);
+            setSelectedLikedProfile(null);
+            
+            // 👇 FIX: Match banne ke baad us profile ko discovery deck se nikal do 👇
+            setProfiles((prevProfiles) => {
+                const newProfiles = prevProfiles.filter(p => p.id !== matchedProfile.id);
+                if (profileIndex >= newProfiles.length) {
+                    setProfileIndex(0);
+                }
+                return newProfiles;
+            });
         }, 300);
-    };;
-
+    };
+    
     // --- PANEL HANDLERS (New) ---
     const openMyProfile = () => setActivePanel('profile');
 
@@ -1134,7 +1150,8 @@ const DashboardPage = () => {
                                     <h5>Finding people near you...</h5>
                                 </div>
                             ) : (selectedLikedProfile || (profiles.length > 0 && currentProfile)) ? (
-                                <motion.div
+                               
+                             <motion.div
                                     key={selectedLikedProfile ? `liked-${selectedLikedProfile.id}` : currentProfile.id}
                                     className={`profile-card ${swipeDirection ? swipeDirection : ''}`}
                                     style={{ x, rotate, opacity }}
@@ -1173,44 +1190,32 @@ const DashboardPage = () => {
                                     <div className="card-info">
                                         <h1 className="profile-name">
                                             {selectedLikedProfile ? selectedLikedProfile.name : currentProfile.name}
-                                            {/* Age aur tick sirf tab dikhao jab normal discovery ho */}
-                                            {!selectedLikedProfile && `, ${currentProfile.age}`}
-                                            {!selectedLikedProfile && currentProfile.verified && <i className="fa-solid fa-circle-check verified-badge"></i>}
+                                            {`, ${selectedLikedProfile ? selectedLikedProfile.age : currentProfile.age}`}
+                                            {(!selectedLikedProfile && currentProfile.verified) && <i className="fa-solid fa-circle-check verified-badge"></i>}
                                         </h1>
 
-                                        {/* Agar normal discovery hai toh puri details dikhao */}
-                                        {!selectedLikedProfile ? (
-                                            <>
-                                                <div className="profile-basic">
-                                                    <span><i className="fa-solid fa-location-dot me-2"></i> {currentProfile.city}</span>
-                                                    <span><i className="fa-solid fa-briefcase me-2"></i> {currentProfile.job}</span>
-                                                </div>
-                                                <div className="pill-container">
-                                                    <div className="info-pill intent-pill">{currentProfile.intent}</div>
-                                                    <div className="info-pill">{currentProfile.drinking}</div>
-                                                </div>
-                                                <div className="bio-box mt-4">
-                                                    <div className="bio-title">My Bio</div>
-                                                    <div className="bio-text">"{currentProfile.bio}"</div>
-                                                </div>
-                                                <h6 className="text-muted small fw-bold mb-2 mt-4">Interests</h6>
-                                                <div className="pill-container">
-                                                    {currentProfile.interests.map(interest => (
-                                                        <div key={interest} className="info-pill">{interest}</div>
-                                                    ))}
-                                                </div>
-                                            </>
-                                        ) : (
-                                            // Agar 'Liked You' se aaye hain toh sirf ek pyara sa message dikhao
-                                            <div className="bio-box mt-4">
-                                                <div className="bio-title">Secret Admirer ✨</div>
-                                                <div className="bio-text">
-                                                    "I liked your profile! Swipe right to match and let's start talking."
-                                                </div>
-                                            </div>
-                                        )}
+                                        <div className="profile-basic">
+                                            <span><i className="fa-solid fa-location-dot me-2"></i> {selectedLikedProfile ? selectedLikedProfile.city : currentProfile.city}</span>
+                                            <span><i className="fa-solid fa-briefcase me-2"></i> {selectedLikedProfile ? selectedLikedProfile.job : currentProfile.job}</span>
+                                        </div>
+                                        <div className="pill-container">
+                                            <div className="info-pill intent-pill">{selectedLikedProfile ? selectedLikedProfile.intent : currentProfile.intent}</div>
+                                            <div className="info-pill">{selectedLikedProfile ? selectedLikedProfile.drinking : currentProfile.drinking}</div>
+                                        </div>
+                                        <div className="bio-box mt-4">
+                                            <div className="bio-title">My Bio</div>
+                                            <div className="bio-text">"{selectedLikedProfile ? selectedLikedProfile.bio : currentProfile.bio}"</div>
+                                        </div>
+                                        <h6 className="text-muted small fw-bold mb-2 mt-4">Interests</h6>
+                                        <div className="pill-container">
+                                            {(selectedLikedProfile ? selectedLikedProfile.interests : currentProfile.interests).map(interest => (
+                                                <div key={interest} className="info-pill">{interest}</div>
+                                            ))}
+                                        </div>
                                     </div>
                                 </motion.div>
+
+
                             ) : (
                                 <div className="text-center text-muted mt-5">
                                     <div className="fs-1 mb-3">👻</div>

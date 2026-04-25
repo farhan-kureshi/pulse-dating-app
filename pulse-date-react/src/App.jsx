@@ -6,6 +6,9 @@ import HomePage from "./pages/HomePage";
 import AuthPage from "./pages/AuthPage";
 import DashboardPage from "./pages/DashboardPage";
 import AdminDashboard from "./pages/AdminDashboard";
+import MissionPage from './pages/MissionPage';
+import SafetyPage from './pages/SafetyPage';
+import CommunityPage from './pages/CommunityPage';
 function App() {
   const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
 
@@ -30,6 +33,9 @@ function App() {
         <Route path="*" element={<Navigate to="/" />} />
 
         <Route path="/admin-panel" element={<AdminDashboard />} />
+        <Route path="/mission" element={<MissionPage />} />
+        <Route path="/safety" element={<SafetyPage />} />
+        <Route path="/community" element={<CommunityPage />} />
       </Routes>
     </Router>
   );

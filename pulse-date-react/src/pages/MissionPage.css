@@ -1,0 +1,166 @@
+/* =========================================
+   PULSEDATE: MISSION PAGE CSS
+========================================= */
+
+.mission-wrapper {
+    background-color: #faf9f7; /* Matching HomePage background */
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+}
+
+/* --- Navbar --- */
+.mission-navbar {
+    position: fixed;
+    top: 0; width: 100%;
+    background: rgba(250, 249, 247, 0.85);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    z-index: 1000;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.back-btn-mission {
+    width: 45px; height: 45px;
+    background: white; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #0f172a; font-size: 1.2rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+}
+.back-btn-mission:hover {
+    transform: translateX(-5px);
+    background: #f5b748; /* Premium Gold */
+    color: white;
+}
+
+/* --- Hero Section --- */
+.mission-hero {
+    padding: 180px 20px 100px 20px;
+    background: radial-gradient(circle at top, rgba(245, 183, 72, 0.1) 0%, rgba(250, 249, 247, 0) 60%);
+}
+
+.badge-premium {
+    display: inline-block;
+    padding: 8px 20px;
+    background: white;
+    color: #f5b748;
+    font-weight: 700;
+    border-radius: 30px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    box-shadow: 0 4px 15px rgba(245, 183, 72, 0.2);
+}
+
+.mission-title {
+    font-size: clamp(3.5rem, 6vw, 5.5rem);
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.1;
+    letter-spacing: -2px;
+}
+
+.text-gradient {
+    background: linear-gradient(45deg, #fd5c63, #f5b748);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.mission-subtitle {
+    font-size: 1.25rem;
+    color: #64748b;
+    line-height: 1.7;
+    max-width: 700px;
+}
+
+/* --- Pillars Section --- */
+.mission-pillars {
+    padding: 80px 0 120px 0;
+}
+
+.pillar-card {
+    background: white;
+    padding: 50px 40px;
+    border-radius: 30px;
+    height: 100%;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.03);
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    border: 1px solid rgba(0,0,0,0.02);
+}
+
+.pillar-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.08);
+}
+
+.active-pillar {
+    background: #0f172a; /* Dark sleek background */
+    color: white;
+    transform: scale(1.05);
+}
+
+.active-pillar:hover {
+    transform: scale(1.05) translateY(-10px);
+}
+
+.pillar-icon {
+    width: 70px; height: 70px;
+    background: rgba(245, 183, 72, 0.15);
+    color: #f5b748;
+    border-radius: 20px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem;
+    margin-bottom: 30px;
+}
+
+.active-pillar .pillar-icon {
+    background: rgba(255,255,255,0.1);
+}
+
+.pillar-card h3 {
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 20px;
+}
+
+.pillar-card p {
+    color: #64748b;
+    line-height: 1.7;
+    font-size: 1.05rem;
+}
+
+/* --- Call to Action --- */
+.mission-cta {
+    padding: 100px 20px;
+    background: white;
+    border-top-left-radius: 50px;
+    border-top-right-radius: 50px;
+}
+
+.btn-join-mission {
+    display: inline-block;
+    padding: 18px 45px;
+    background: #0f172a;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 700;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.2);
+}
+
+.btn-join-mission:hover {
+    background: #f5b748;
+    color: #0f172a;
+    transform: translateY(-3px);
+    box-shadow: 0 15px 35px rgba(245, 183, 72, 0.3);
+}
+
+/* --- Mobile Responsiveness --- */
+@media (max-width: 991px) {
+    .mission-hero { padding-top: 140px; }
+    .active-pillar { transform: scale(1); }
+    .active-pillar:hover { transform: translateY(-10px); }
+}

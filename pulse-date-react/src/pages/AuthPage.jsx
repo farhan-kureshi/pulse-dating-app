@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './AuthPage.css';
 
+
 const AuthPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -49,53 +50,59 @@ const AuthPage = () => {
     return Math.min(100, score);
   };
 
-  // --- Django Backend API Integration ---
-  const handleSendOtp = (e) => {
+ const handleSendOtp = async (e) => {
     e.preventDefault();
-    if (phoneNumber.length > 5) setOtpSent(true); // Display OTP field
+    // 👇 NAYA: Ab jab tak fix 10 digit nahi honge, OTP nahi bhejega
+    if (phoneNumber.length === 10) { 
+      try {
+        const res = await fetch('http://127.0.0.1:8000/api/send-otp/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone_number: phoneNumber })
+        });
+        
+        if (res.ok) {
+          setOtpSent(true); 
+          alert("OTP Sent On VS Code Terminal.");
+        } else {
+          alert("Error sending OTP");
+        }
+      } catch (error) {
+        alert("Server Error. Please try again later");
+      }
+    } else {
+      // Agar 10 se kam ya zyada hai toh error dikhayega
+      alert("Not a valid phone number. Please enter exactly 10 digits.");
+    }
   };
 
   const handleVerify = async (e) => {
     e.preventDefault();
-
-    if (otp === '1234') {
+    if (otp.length === 4) {
       try {
         const response = await fetch('http://127.0.0.1:8000/api/login/', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          // 👇 IMPORTANT: Sending the auth mode is required here
-          body: JSON.stringify({
-            phone_number: phoneNumber,
-            mode: mode
-          })
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone_number: phoneNumber, mode: mode, otp: otp })
         });
-
         const data = await response.json();
 
         if (response.ok) {
-          console.log("Backend Message:", data.message);
-
-          // Save the ID to the browser memory immediately
           localStorage.setItem('user_id', data.user_id);
-
-          // Proceed to next steps based on mode
-          if (mode === 'signup') {
-            setShowRules(true);
-          } else {
+          if (mode === 'login') {
             localStorage.setItem('isAuthenticated', 'true');
-            window.location.href = '/dashboard'; // Redirect to dashboard
+            window.location.href = '/dashboard';
+          } else {
+            setShowSetup(true);
           }
         } else {
-          alert("Backend Error: " + data.error);
+          alert("Error: " + data.error);
         }
       } catch (error) {
-        console.error("API Error:", error);
-        alert("Django server is offline or unreachable.");
+        alert("Server Error.");
       }
     } else {
-      alert("Please enter 1234 as OTP");
+      alert("Please enter the 4-digit OTP");
     }
   };
 
@@ -193,7 +200,7 @@ const AuthPage = () => {
       setPhotoFiles(newPhotoFiles);
     }
   };
-
+ 
   return (
     <div className="auth-wrapper">
       {/* LEFT SIDE: STICKY IMAGE */}
@@ -247,9 +254,21 @@ const AuthPage = () => {
                   </div>
                 )}
 
-                <div className="premium-input-container mb-4">
+             <div className="premium-input-container mb-4">
                   <span className="country-code-auth">+91</span>
-                  <input type="tel" className="premium-input ps-5" placeholder="Mobile number" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} required />
+                  <input 
+                    type="tel" 
+                    className="premium-input ps-5" 
+                    placeholder="Mobile number" 
+                    maxLength="10" /* 👇 NAYA: 10 se zyada type hi nahi hoga */
+                    value={phoneNumber} 
+                    onChange={(e) => {
+                      // 👇 NAYA: Text/Alphabets type hone se rokega, sirf number lega
+                      const onlyNums = e.target.value.replace(/[^0-9]/g, '');
+                      setPhoneNumber(onlyNums);
+                    }} 
+                    required 
+                  />
                 </div>
 
                 {otpSent && (

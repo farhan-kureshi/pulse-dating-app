@@ -1,0 +1,154 @@
+/* =========================================
+   PULSEDATE: COMMUNITY PAGE
+========================================= */
+
+.community-wrapper {
+    background-color: #fffafb; /* Soft warm pinkish-white background */
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+}
+
+/* --- Navbar --- */
+.community-navbar {
+    position: fixed;
+    top: 0; width: 100%;
+    background: rgba(255, 250, 251, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    z-index: 1000;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.back-btn-community {
+    width: 45px; height: 45px;
+    background: white; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #1e293b; font-size: 1.2rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+}
+.back-btn-community:hover {
+    transform: translateX(-5px);
+    background: #f43f5e; /* Rose */
+    color: white;
+}
+
+/* --- Hero Section --- */
+.community-hero {
+    padding: 180px 20px 80px 20px;
+    background: radial-gradient(circle at top, rgba(244, 63, 94, 0.08) 0%, rgba(255, 250, 251, 0) 70%);
+}
+
+.badge-heart {
+    display: inline-block;
+    padding: 8px 22px;
+    background: #ffe4e6;
+    color: #e11d48;
+    font-weight: 700;
+    border-radius: 30px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    border: 1px solid #fecdd3;
+    box-shadow: 0 4px 15px rgba(244, 63, 94, 0.15);
+}
+
+.community-title {
+    font-size: clamp(3.2rem, 5vw, 5rem);
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.1;
+    letter-spacing: -1.5px;
+}
+
+.text-rose-gradient {
+    background: linear-gradient(45deg, #f43f5e, #fb923c);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.community-subtitle {
+    font-size: 1.15rem;
+    color: #64748b;
+    line-height: 1.7;
+    max-width: 650px;
+}
+
+/* --- Guidelines Section --- */
+.community-guidelines {
+    padding: 60px 0 100px 0;
+}
+
+.guideline-card {
+    background: white;
+    padding: 35px;
+    border-radius: 24px;
+    height: 100%;
+    border: 1px solid rgba(0,0,0,0.04);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.guideline-icon {
+    width: 60px; height: 60px;
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.6rem;
+    flex-shrink: 0;
+}
+
+/* Dynamic Colors for Icons */
+.bg-rose-light { background: #ffe4e6; } .text-rose { color: #e11d48; }
+.bg-amber-light { background: #fef3c7; } .text-amber { color: #d97706; }
+.bg-teal-light { background: #ccfbf1; } .text-teal { color: #0d9488; }
+.bg-indigo-light { background: #e0e7ff; } .text-indigo { color: #4f46e5; }
+
+.guideline-card h3 {
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 12px;
+    font-size: 1.3rem;
+    margin-top: 5px;
+}
+
+.guideline-card p {
+    color: #64748b;
+    line-height: 1.6;
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* --- CTA Section --- */
+.community-cta {
+    padding: 80px 20px 120px 20px;
+    background: linear-gradient(to bottom, #fffafb, #ffe4e6);
+}
+
+.btn-community-join {
+    display: inline-block;
+    padding: 18px 45px;
+    background: #f43f5e;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 700;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 25px rgba(244, 63, 94, 0.3);
+}
+
+.btn-community-join:hover {
+    background: #0f172a;
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 15px 35px rgba(15, 23, 42, 0.2);
+}
+
+/* --- Mobile Fixes --- */
+@media (max-width: 768px) {
+    .community-hero { padding-top: 130px; }
+    .guideline-card { flex-direction: column; text-align: center; align-items: center; padding: 30px 20px; }
+}

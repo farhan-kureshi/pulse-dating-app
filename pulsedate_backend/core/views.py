@@ -11,6 +11,10 @@ from django.conf import settings
 from datetime import timedelta
 from django.utils import timezone
 from django.db import models
+import random
+import requests
+from django.utils import timezone
+from .models import OTPRecord
 
 # Apne keys yahan dalein
 client = razorpay.Client(auth=("rzp_test_SgzTfh4Rj34CWK", "7bE7HQTf2hb0h58D0zLSrHCq"))
@@ -294,7 +298,6 @@ def record_swipe(request):
     except Exception as e:
         return Response({"error": str(e)}, status=400)
 
-
 @api_view(['GET'])
 def get_sidebar_data(request, user_id):
     """
@@ -308,8 +311,8 @@ def get_sidebar_data(request, user_id):
         matches = Match.objects.filter(Q(user1=user) | Q(user2=user))
         match_list = []
         for m in matches:
-            # Dusre user ka data nikalo (Jo Farhan nahi hai)
             other_user = m.user2 if m.user1 == user else m.user1
+            # 👇 FIX: 'photo_1' ki jagah wapas 'profile_pic_1' kar diya 👇
             photo_url = base_url + other_user.profile_pic_1.url if other_user.profile_pic_1 else "/default-avatar.png"
             match_list.append({
                 "id": other_user.id,
@@ -321,24 +324,50 @@ def get_sidebar_data(request, user_id):
         liked_me_swipes = Swipe.objects.filter(swiped_on=user, is_like=True)
         my_swipes = Swipe.objects.filter(swiper=user).values_list('swiped_on_id', flat=True)
 
+        likes = liked_me_swipes.exclude(swiper_id__in=my_swipes)
+
+        # Liked You List update karein
         liked_you_list = []
-        for swipe in liked_me_swipes:
-            if swipe.swiper.id not in my_swipes:
-                photo_url = base_url + swipe.swiper.profile_pic_1.url if swipe.swiper.profile_pic_1 else "/default-avatar.png"
-                liked_you_list.append({
-                    "id": swipe.swiper.id,
-                    "name": swipe.swiper.first_name or "Unknown",
-                    "photo": photo_url,
-                    "is_superlike": swipe.is_superlike  # 👇 YEH NAYI LINE ADD KAREIN 👇
-                })
+        for l in likes:
+            u = l.swiper # Jisne aapko like kiya
+            
+            # Age calculate karna
+            age = 0
+            if u.dob:
+                from datetime import date
+                today = date.today()
+                age = today.year - u.dob.year - ((today.month, today.day) < (u.dob.month, u.dob.day))
+
+            # 👇 FIX: Yahan bhi saari images ko 'profile_pic_X' kar diya 👇
+            liked_you_list.append({
+                "id": u.id,
+                "name": u.first_name or "Someone",
+                "age": age,
+                "city": u.city or "Unknown",
+                "job": u.job_title or "Private",
+                "bio": u.bio or "",
+                "intent": u.intent or "Looking for connection",
+                "drinking": u.drinking_habit or "Socially",
+                "interests": u.interests.split(', ') if u.interests else [],
+                "photo": f"http://127.0.0.1:8000{u.profile_pic_1.url}" if u.profile_pic_1 else "/default-avatar.png",
+                "photos": [
+                    f"http://127.0.0.1:8000{u.profile_pic_1.url}" if u.profile_pic_1 else None,
+                    f"http://127.0.0.1:8000{u.profile_pic_2.url}" if u.profile_pic_2 else None,
+                    f"http://127.0.0.1:8000{u.profile_pic_3.url}" if u.profile_pic_3 else None,
+                    f"http://127.0.0.1:8000{u.profile_pic_4.url}" if u.profile_pic_4 else None,
+                    f"http://127.0.0.1:8000{u.profile_pic_5.url}" if u.profile_pic_5 else None,
+                    f"http://127.0.0.1:8000{u.profile_pic_6.url}" if u.profile_pic_6 else None,
+                ],
+                "is_superlike": getattr(l, 'is_superlike', False)
+            })
 
         return Response({
             "matches": match_list,
             "liked_you": liked_you_list
         })
     except Exception as e:
+        print(f"Sidebar API Error: {str(e)}") 
         return Response({"error": str(e)}, status=400)
-    
 @api_view(['GET', 'POST'])
 def chat_messages(request, match_id): 
     # Yahan 'match_id' actually samne wale user ka ID (jaise 16) aa raha hai
@@ -590,7 +619,6 @@ def admin_toggle_block(request):
     except Exception as e:
         return Response({"error": str(e)}, status=400)    
     
- # views.py ke niche yeh jodiye
 @api_view(['GET'])
 def get_swipe_logs(request):
     try:
@@ -599,23 +627,18 @@ def get_swipe_logs(request):
         logs = []
 
         for s in swipes:
-            # 👇 YAHAN CHANGE KIYA HAI: 'swiper' aur 'swiped_on' use kiya hai
             swiper_obj = s.swiper 
-            target_obj = s.swiped_on # 👈 ERROR YAHI THA! 'target' ki jagah 'swiped_on' aayega
+            target_obj = s.swiped_on # 👈 Yahan 'target' ki jagah 'swiped_on' aayega
 
-            # Check for Match
-            # 👇 YAHAN BHI CHANGE KIYA HAI: 'user1' aur 'user2' use kiya hai (user_1 aur user_2 nahi)
+            # Check for Match (Match model mein fields 'user1' aur 'user2' hain)
             is_match = Match.objects.filter(user1=swiper_obj, user2=target_obj).exists() or \
                        Match.objects.filter(user1=target_obj, user2=swiper_obj).exists()
-
-            # Swipe type check karo (Aapke model ke hisaab se 'is_like' boolean hai)
-            swipe_type = "Right" if s.is_like else "Left"
 
             logs.append({
                 "id": s.id,
                 "swiper_name": swiper_obj.first_name if swiper_obj.first_name else "User",
                 "target_name": target_obj.first_name if target_obj.first_name else "User",
-                "swipe_type": swipe_type, # Frontend isko 'Right' ya 'Left' expect kar raha hai
+                "swipe_type": "Liked ❤️" if (getattr(s, 'is_like', False) or getattr(s, 'is_superlike', False)) else "Passed ❌",
                 "is_match": is_match,
                 "time": s.timestamp.strftime("%d %b, %I:%M %p")
             })
@@ -655,3 +678,61 @@ def get_admin_transactions(request):
     except Exception as e:
         print(f"Transaction API Error: {str(e)}") # 👈 YEH LINE ADD KAREIN taaki terminal mein error dikhe
         return Response({"error": str(e)}, status=500)   
+    
+@api_view(['POST'])
+def send_real_otp(request):
+    phone = request.data.get('phone_number')
+    
+    if not phone or len(phone) != 10:
+        return Response({"error": "Mobile number exactly 10 digits ka hona chahiye."}, status=400)
+        
+    otp = str(random.randint(1000, 9999)) # 4 digit OTP
+    OTPRecord.objects.update_or_create(
+        phone_number=phone,
+        defaults={'otp': otp, 'timestamp': timezone.now()}
+    )
+    
+    # 👇 ASLI JADOO: Yeh aapke VS Code terminal mein OTP dikhayega 👇
+    print("\n" + "="*30)
+    print(f"🔥 PULSEDATE OTP HACK 🔥")
+    print(f"Number: {phone}")
+    print(f"OTP: {otp}")
+    print("="*30 + "\n")
+    
+    # React ko bol do ki OTP bhej diya (bina kisi SMS API ke error ke)
+    return Response({"message": "OTP generated! Check VS Code terminal."})
+
+@api_view(['POST'])
+def login_user(request):
+    phone = request.data.get('phone_number')
+    mode = request.data.get('mode')
+    otp_entered = request.data.get('otp') # React se OTP aayega
+    
+    if not phone:
+        return Response({"error": "Phone number is required."}, status=400)
+        
+    # 👇 TERMINAL WALA OTP CHECKING 👇
+    if otp_entered:
+        try:
+            record = OTPRecord.objects.get(phone_number=phone)
+            if record.otp != otp_entered:
+                return Response({"error": "Invalid OTP! Terminal check karo."}, status=400)
+            record.delete() # Sahi hai toh delete kar do
+        except OTPRecord.DoesNotExist:
+            return Response({"error": "No OTP generated for this number."}, status=400)
+            
+    user_exists = UserProfile.objects.filter(phone_number=phone).exists()
+    
+    if mode == 'login':
+        if user_exists:
+            user = UserProfile.objects.get(phone_number=phone)
+            return Response({"message": "Login successful!", "user_id": user.id})
+        else:
+            return Response({"error": "Account not found. Please sign up first."}, status=404)
+            
+    elif mode == 'signup':
+        if user_exists:
+            return Response({"error": "This number is already registered. Please log in."}, status=400)
+        else:
+            user = UserProfile.objects.create(phone_number=phone)
+            return Response({"message": "OTP Verified. Proceed to profile setup.", "user_id": user.id})

@@ -29,7 +29,7 @@ const HomePage = () => {
       // Immediately hide the preloader if the page was already loaded (e.g., navigating back)
       const preloader = document.getElementById('preloader');
       if (preloader) {
-        preloader.style.display = 'none'; 
+        preloader.style.display = 'none';
       }
     }
 
@@ -73,9 +73,15 @@ const HomePage = () => {
 
           <div className="collapse navbar-collapse flex-grow-0" id="navbarNav">
             <ul className="navbar-nav me-auto">
-              <li className="nav-item"><a className="nav-link" href="#">Mission</a></li>
-              <li className="nav-item"><a className="nav-link" href="#">Safety</a></li>
-              <li className="nav-item"><a className="nav-link" href="#">Community</a></li>
+              <li className="nav-item">
+                <Link to="/mission" className="nav-link">Mission</Link>
+              </li>
+              <li className="nav-item">
+                <Link to="/safety" className="nav-link">Safety</Link>
+              </li>
+              <li className="nav-item">
+                <Link to="/community" className="nav-link">Community</Link>
+              </li>
               {/* Mobile Only Buttons with State */}
               <li className="nav-item d-lg-none mt-3">
                 <Link to="/auth" state={{ form: 'login' }} className="nav-link fw-bold">Log in</Link>
@@ -165,7 +171,7 @@ const HomePage = () => {
               <p className="text-white-50 small pe-lg-4 mb-4" style={{ lineHeight: '1.6' }}>
                 The matchmaking platform designed for genuine connections and real-life dates. Don't just swipe, find your vibe.
               </p>
-              
+
               <div className="social-links">
                 <a href="https://www.instagram.com/farhan_kureshi2607/" target="_blank" rel="noopener noreferrer" title="Instagram">
                   <i className="fa-brands fa-instagram"></i>

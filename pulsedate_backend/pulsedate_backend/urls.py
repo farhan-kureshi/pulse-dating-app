@@ -30,6 +30,8 @@ urlpatterns = [
     path('api/admin/swipe-logs/', views.get_swipe_logs),
     path('api/admin/toggle-verify/', views.admin_toggle_verify, name='admin_toggle_verify'),
     path('api/admin/transactions/', views.get_admin_transactions),
+    path('api/send-otp/', views.send_real_otp),
+    
 ]
 
 # 👇 Ye line end mein add karein 👇

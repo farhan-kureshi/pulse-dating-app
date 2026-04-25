@@ -59,15 +59,16 @@ class BlockListAdmin(admin.ModelAdmin):
 # ==========================================
 @admin.register(Swipe)
 class SwipeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'swiper', 'target', 'swipe_type', 'timestamp')
-    search_fields = ('swiper__first_name', 'target__first_name')
+    # 'target' ko 'swiped_on' se replace kar diya hai
+    list_display = ('id', 'swiper', 'swiped_on', 'swipe_type', 'timestamp')
+    search_fields = ('swiper__first_name', 'swiped_on__first_name')
     list_filter = ('is_like', 'is_superlike', 'timestamp')
 
     # Custom column to show Like/Pass actions visually
     def swipe_type(self, obj):
-        if obj.is_superlike:
+        if getattr(obj, 'is_superlike', False):
             return format_html('<span style="color: #2196f3; font-weight: bold;">⭐ Super Like</span>')
-        elif obj.is_like:
+        elif getattr(obj, 'is_like', False):
             return format_html('<span style="color: #17e27a; font-weight: bold;">❤️ Like</span>')
         return format_html('<span style="color: #fd5c63; font-weight: bold;">❌ Pass</span>')
     swipe_type.short_description = "Action"
