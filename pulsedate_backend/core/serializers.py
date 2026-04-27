@@ -7,4 +7,5 @@ class MessageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Message
-        fields = ['id', 'match', 'sender', 'sender_name', 'content', 'timestamp', 'is_read', 'image', 'is_deleted', 'reaction']
+        # DONO LINES KO MERGE KAR DIYA HAI (image bhi aa gayi aur purane fields bhi safe hain)
+        fields = ['id', 'match', 'sender', 'sender_name', 'content', 'image', 'timestamp', 'is_read', 'is_deleted', 'reaction']

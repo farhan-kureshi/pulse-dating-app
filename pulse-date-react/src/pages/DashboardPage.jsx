@@ -22,7 +22,7 @@ const DashboardPage = () => {
     // Basic Info
     const [userName, setUserName] = useState("Loading...");
     const [editLastName, setEditLastName] = useState("");
-    const [userMobile, setUserMobile] = useState(""); 
+    const [userMobile, setUserMobile] = useState("");
     const [editDob, setEditDob] = useState("");
     const [mainDp, setMainDp] = useState("/default-avatar.png");
     const [editBio, setEditBio] = useState("");
@@ -41,17 +41,17 @@ const DashboardPage = () => {
     const [editPhotos, setEditPhotos] = useState([null, null, null, null, null, null]);
     const [editPhotoFiles, setEditPhotoFiles] = useState([null, null, null, null, null, null]);
     const [isCollapsed, setIsCollapsed] = useState(false);
-    const [searchQuery, setSearchQuery] = useState(""); 
+    const [searchQuery, setSearchQuery] = useState("");
 
     // --- CHAT STATES (NAYE) ---
     const [chatMessages, setChatMessages] = useState([]);
-    const [newMessageText, setNewMessageText] = useState(""); 
+    const [newMessageText, setNewMessageText] = useState("");
     const [selectedImage, setSelectedImage] = useState(null);
     const [selectedImages, setSelectedImages] = useState([]);
     const fileInputRef = useRef(null);
 
     const [activeChatList, setActiveChatList] = useState([]);
-    const [chatSocket, setChatSocket] = useState(null); 
+    const [chatSocket, setChatSocket] = useState(null);
 
     const [isOtherUserTyping, setIsOtherUserTyping] = useState(false);
     const [isOtherUserOnline, setIsOtherUserOnline] = useState(false);
@@ -64,7 +64,7 @@ const DashboardPage = () => {
     const peerRef = useRef(null);
     const localStreamRef = useRef(null);
 
-    const [callType, setCallType] = useState('video'); 
+    const [callType, setCallType] = useState('video');
 
     // --- AUDIO & RINGTONE REFS ---
     const ringtoneRef = useRef(new Audio('/ringtone.mp3')); // Incoming call 
@@ -149,14 +149,14 @@ const DashboardPage = () => {
     }, []);
 
     // --- FETCH DISCOVERY PROFILES (Baaqi Logon Ka Data) ---
-// 1. Extracted function outside (Without any outer useEffect)
+    // 1. Extracted function outside (Without any outer useEffect)
     const fetchDiscoveryProfiles = async () => {
         setLoadingProfiles(true);
         const userId = localStorage.getItem('user_id');
         if (!userId) return;
 
         try {
-         // Passing Age and Gender in the URL
+            // Passing Age and Gender in the URL
             const response = await fetch(`http://127.0.0.1:8000/api/discovery/${userId}/?age=${age}&gender=${preferredGender}`);
             const data = await response.json();
 
@@ -172,7 +172,7 @@ const DashboardPage = () => {
         }
     };
 
-// 2. useEffect is written separately (Below the function)
+    // 2. useEffect is written separately (Below the function)
     useEffect(() => {
         fetchDiscoveryProfiles();
     }, []);
@@ -357,7 +357,7 @@ const DashboardPage = () => {
     };
 
 
-// --- REAL SWIPE ALGORITHM ---
+    // --- REAL SWIPE ALGORITHM ---
     const handleSwipe = async (direction) => {
         setSwipeDirection(`swipe-${direction}`); // Animation start
 
@@ -378,15 +378,16 @@ const DashboardPage = () => {
                         swiper_id: userId,
                         swiped_on_id: swipedProfile.id,
                         is_like: isLike,
-                        is_superlike: isSuperLike 
+                        is_superlike: isSuperLike
                     })
                 });
 
                 const data = await response.json();
 
                 if (response.ok && data.match) {
-                    isMatch = true; 
-                    setMatchedProfile(swipedProfile);
+                    isMatch = true;
+                    // 👇 FIX: Backend se jo nayi match_id aayi hai, use profile ke sath jod do
+                    setMatchedProfile({ ...swipedProfile, match_id: data.match_id });
                 }
             } catch (error) {
                 console.error("API Error:", error);
@@ -404,7 +405,7 @@ const DashboardPage = () => {
                 if (selectedLikedProfile) {
                     setSelectedLikedProfile(null);
                 }
-                
+
                 // 👇 ASLI FIX: Jis profile ko swipe kiya, usko React ki list se HATA do 👇
                 setProfiles((prevProfiles) => {
                     const newProfiles = prevProfiles.filter(p => p.id !== swipedProfile.id);
@@ -437,14 +438,14 @@ const DashboardPage = () => {
         }
     };
 
-// Match screen band hone ke baad agle profile par jana
+    // Match screen band hone ke baad agle profile par jana
     const closeCelebration = () => {
         setShowMatch(false);
         setTimeout(() => {
             setSwipeDirection(null);
             setPhotoIndex(0);
             setSelectedLikedProfile(null);
-            
+
             // 👇 FIX: Match banne ke baad us profile ko discovery deck se nikal do 👇
             setProfiles((prevProfiles) => {
                 const newProfiles = prevProfiles.filter(p => p.id !== matchedProfile.id);
@@ -455,7 +456,7 @@ const DashboardPage = () => {
             });
         }, 300);
     };
-    
+
     // --- PANEL HANDLERS (New) ---
     const openMyProfile = () => setActivePanel('profile');
 
@@ -592,10 +593,17 @@ const DashboardPage = () => {
     };
 
     const openChat = (matchId, name, avatar) => {
-        // 👇 NAYA LOGIC: Nayi chat khulte hi purane bande ka status aur typing RESET kar do
+        // 👇 NAYA: Safety Lock (Agar backend se ID nahi aayi toh roko)
+        if (!matchId) {
+            console.error("Match ID is missing! Backend se id ya match_id nahi aa raha.");
+            alert("Chat open nahi ho sakti kyunki Match ID undefined hai!");
+            return;
+        }
+
+        // Nayi chat khulte hi purane bande ka status aur typing RESET kar do
         setIsOtherUserOnline(false);
         setIsOtherUserTyping(false);
-        setChatMessages([]); // Taki Faizan ki chat me Sammanta ke messages 1 second ke liye flash na ho
+        setChatMessages([]);
 
         setChatData({ matchId, name, avatar }); // Naya matchId save kiya
         setActivePanel('chat');
@@ -965,7 +973,7 @@ const DashboardPage = () => {
                     <div className={`tab-btn ${activeTab === 'messages' ? 'active' : ''}`} onClick={() => setActiveTab('messages')}>Messages</div>
                 </div>
 
-                {/* Tab Content */}
+{/* Tab Content */}
                 <div className="sidebar-content">
                     {activeTab === 'matches' ? (
                         <div>
@@ -976,13 +984,12 @@ const DashboardPage = () => {
                                 <div className="p-3 text-muted small">No matches yet. Keep swiping!</div>
                             )}
 
-                            {/* Yahan par .filter add kiya gaya hai */}
                             {sidebarData.matches
                                 .filter(m => m.name.toLowerCase().includes(searchQuery.toLowerCase()))
                                 .map(match => (
-                                    <div key={`match-${match.id}`} className="list-item" onClick={() => openChat(match.id, match.name, match.photo)} style={{ cursor: 'pointer' }}>
+                                    <div key={`match-${match.id}`} className="list-item" onClick={() => openChat(match.match_id || match.id, match.name, match.photo)} style={{ cursor: 'pointer' }}>
                                         <div className="list-avatar-box">
-                                            <img src={match.photo} className="list-avatar" style={{ border: '2px solid #17e27a' }} />
+                                            <img src={match.photo} className="list-avatar" style={{ border: '2px solid #17e27a' }} alt={match.name} />
                                             <div className="badge-icon" style={{ backgroundColor: '#17e27a' }}><i className="fa-solid fa-heart"></i></div>
                                         </div>
                                         <div className="list-info">
@@ -1000,38 +1007,31 @@ const DashboardPage = () => {
                                     key={`liked-${person.id}`}
                                     className="list-item"
                                     style={{ cursor: 'pointer' }}
-                                    // 👇 NAYA: Agar VIP NAHI hai, tabhi Premium Modal khulega
                                     onClick={() => {
                                         if (isPremium) {
-                                            // 1. Is profile ko 'Select' karo taaki details dikhe
                                             setSelectedLikedProfile(person);
-                                            // 2. Dashboard ko 'Discovery' panel par le jao jahan bada card dikhta hai
                                             setActivePanel('discovery');
                                         } else {
-                                            // Agar VIP nahi hai toh modal dikhao
                                             setShowPremiumModal(true);
                                         }
-                                    }}                           >
+                                    }}
+                                >
                                     <div className="list-avatar-box">
                                         <img
                                             src={person.photo}
                                             className="list-avatar"
                                             style={{
-                                                // 👇 ASLI JAADU: Agar premium hai toh 'none' (saaf), warna 'blur'
                                                 filter: isPremium ? 'none' : 'blur(5px)',
                                                 border: person.is_superlike ? '2px solid #2196f3' : '2px solid #fd5c63'
                                             }}
+                                            alt="Liked You"
                                         />
                                         <div className="badge-icon" style={{ backgroundColor: person.is_superlike ? '#2196f3' : '#fd5c63' }}>
                                             {person.is_superlike ? <i className="fa-solid fa-star"></i> : <i className="fa-solid fa-heart"></i>}
                                         </div>
                                     </div>
                                     <div className="list-info">
-                                        {/* 👇 NAYA: Premium hai toh asli naam dikhao, warna 'Someone' */}
-                                        <div className="list-name">
-                                            {isPremium ? person.name : 'Someone'}
-                                        </div>
-
+                                        <div className="list-name">{isPremium ? person.name : 'Someone'}</div>
                                         <div className={`list-msg fw-bold ${person.is_superlike ? 'text-primary' : 'text-danger'}`}>
                                             {person.is_superlike ? 'Super Liked you! Tap to view.' : 'Liked you. Tap to view.'}
                                         </div>
@@ -1041,7 +1041,7 @@ const DashboardPage = () => {
                         </div>
 
                     ) : (
-                        // --- DYNAMIC MESSAGES TAB ---
+                        /* --- DYNAMIC MESSAGES TAB --- */
                         <div>
                             {activeChatList.length === 0 ? (
                                 <div className="p-3 text-muted small text-center mt-4">
@@ -1052,9 +1052,14 @@ const DashboardPage = () => {
                                 activeChatList.map((chat) => {
                                     const isMe = chat.sender_id == localStorage.getItem('user_id');
                                     return (
-                                        <div key={`chatlist-${chat.other_user_id}`} className="list-item" onClick={() => openChat(chat.other_user_id, chat.name, chat.photo)} style={{ cursor: 'pointer' }}>
+                                        <div 
+                                            key={`chatlist-${chat.other_user_id}`} 
+                                            className="list-item" 
+                                            onClick={() => openChat(chat.match_id, chat.name, chat.photo)} 
+                                            style={{ cursor: 'pointer' }}
+                                        >
                                             <div className="list-avatar-box">
-                                                <img src={chat.photo} className="list-avatar" alt="Profile" />
+                                                <img src={chat.photo} className="list-avatar" alt={chat.name} />
                                             </div>
                                             <div className="list-info" style={{ width: '100%', overflow: 'hidden' }}>
                                                 <div className="d-flex justify-content-between align-items-center">
@@ -1066,14 +1071,12 @@ const DashboardPage = () => {
 
                                                 <div className="d-flex justify-content-between align-items-center mt-1">
                                                     <div className="list-msg text-muted text-truncate" style={{ fontSize: '0.8rem', maxWidth: '160px', fontWeight: chat.unread_count > 0 ? '600' : 'normal' }}>
-                                                        {/* Blue Ticks Logic: Agar is_read true hai toh blue (text-info), warna grey */}
                                                         {isMe && (
                                                             <i className={`fa-solid fa-check-double me-1 ${chat.is_read ? 'text-info' : 'text-secondary'}`} style={{ fontSize: '0.7rem' }}></i>
                                                         )}
                                                         {chat.last_message}
                                                     </div>
 
-                                                    {/* WhatsApp jaisa Green Badge (Unread Count) */}
                                                     {chat.unread_count > 0 && (
                                                         <div className="badge rounded-circle" style={{ backgroundColor: '#17e27a', fontSize: '0.65rem', padding: '4px 6px' }}>
                                                             {chat.unread_count}
@@ -1088,22 +1091,19 @@ const DashboardPage = () => {
                         </div>
                     )}
                 </div>
+
                 {/* 👇 NAYA SIDEBAR FOOTER (Settings & Logout) 👇 */}
                 <div className="sidebar-footer" style={{ padding: '15px 25px', borderTop: '1px solid #e0e0e0', marginTop: 'auto' }}>
-
-                    {/* Settings Option */}
                     <div className="d-flex align-items-center gap-3 text-muted mb-3" style={{ cursor: 'pointer' }} onClick={() => { setShowSettingsModal(true); fetchBlockedUsers(); }}>
                         <i className="fa-solid fa-gear fs-5"></i>
                         <span className="fw-bold">Settings & Help</span>
                     </div>
-
-                    {/* Log Out Option */}
                     <div className="d-flex align-items-center gap-3 text-danger" style={{ cursor: 'pointer' }} onClick={handleLogout}>
                         <i className="fa-solid fa-arrow-right-from-bracket fs-5"></i>
                         <span className="fw-bold">Log out</span>
                     </div>
-
                 </div>
+
                 {/* 👆 NAYA CODE YAHAN KHATAM 👆 */}
             </aside>
 
@@ -1150,8 +1150,8 @@ const DashboardPage = () => {
                                     <h5>Finding people near you...</h5>
                                 </div>
                             ) : (selectedLikedProfile || (profiles.length > 0 && currentProfile)) ? (
-                               
-                             <motion.div
+
+                                <motion.div
                                     key={selectedLikedProfile ? `liked-${selectedLikedProfile.id}` : currentProfile.id}
                                     className={`profile-card ${swipeDirection ? swipeDirection : ''}`}
                                     style={{ x, rotate, opacity }}
@@ -1484,7 +1484,7 @@ const DashboardPage = () => {
                                     let currentGroup = null;
 
                                     chatMessages.forEach((msg) => {
-                                        const isImageOnly = msg.image_url && !msg.content;
+                                        const isImageOnly = msg.image && !msg.content;
 
                                         // Agar pichla message bhi photo tha aur same bande ne bheja hai, toh usi me jod do
                                         if (currentGroup && currentGroup.sender == msg.sender && isImageOnly && currentGroup.isImageGroup) {
@@ -1494,7 +1494,7 @@ const DashboardPage = () => {
                                             currentGroup = {
                                                 ...msg,
                                                 isImageGroup: isImageOnly,
-                                                images: isImageOnly ? [msg] : [] // Photos ka ek array bana liya
+                                                images: isImageOnly ? [msg] : []
                                             };
                                         }
                                     });
@@ -1574,9 +1574,9 @@ const DashboardPage = () => {
                                                                 return (
                                                                     <div key={imgIndex} style={{ position: 'relative' }}>
                                                                         <img
-                                                                            src={`http://127.0.0.1:8000${imgMsg.image_url}`}
+                                                                            src={imgMsg.image?.startsWith('http') ? imgMsg.image : `http://127.0.0.1:8000${imgMsg.image}`}
                                                                             alt="Sent file"
-                                                                            onClick={(e) => { e.stopPropagation(); setZoomImage(imgMsg.image_url); }}
+                                                                            onClick={(e) => { e.stopPropagation(); setZoomImage(imgMsg.image); }}
                                                                             style={{ width: imgSize, height: imgSize, objectFit: 'cover', borderRadius: '8px', display: 'block' }}
                                                                         />
                                                                         {imgIndex === group.images.length - 1 && (
@@ -1591,7 +1591,15 @@ const DashboardPage = () => {
                                                         ) : (
                                                             /* Normal Text ya Text+Image */
                                                             <>
-                                                                {group.image_url && <img src={`http://127.0.0.1:8000${group.image_url}`} alt="Sent file" onClick={(e) => { e.stopPropagation(); setZoomImage(group.image_url); }} style={{ width: '260px', height: '280px', objectFit: 'cover', borderRadius: '8px', marginBottom: '5px', display: 'block' }} />}
+                                                                {/* Image sirf tabhi dikhegi jab database mein image hogi */}
+                                                                {group.image && (
+                                                                    <img
+                                                                        src={group.image?.startsWith('http') ? group.image : `http://127.0.0.1:8000${group.image}`}
+                                                                        alt="Sent file"
+                                                                        onClick={(e) => { e.stopPropagation(); setZoomImage(group.image); }}
+                                                                        style={{ width: '260px', height: '280px', objectFit: 'cover', borderRadius: '8px', display: 'block', marginBottom: '5px' }}
+                                                                    />
+                                                                )}
                                                                 {group.content && <span style={{ width: '100%', marginTop: '5px' }}>{group.content}</span>}
                                                                 <span className="message-time text-muted" style={{ fontSize: '0.65rem', marginTop: group.content ? '4px' : '0', marginLeft: 'auto' }}>
                                                                     {new Date(group.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -1816,7 +1824,7 @@ const DashboardPage = () => {
                     Apply Filters
                 </button>
             </div>
-{/* =========================================
+            {/* =========================================
                 MATCH CELEBRATION OVERLAY
             ========================================= */}
             {showMatch && matchedProfile && (
@@ -1832,22 +1840,21 @@ const DashboardPage = () => {
                         <i className="fa-solid fa-heart match-celebration-heart"></i>
 
                         {/* 👇 FIX: Agar single photo hai toh wo lo, warna array ki pehli photo lo 👇 */}
-                        <img 
-                            src={matchedProfile.photo || matchedProfile.photos[0]} 
-                            alt="Match" 
-                            className="match-celebration-avatar" 
+                        <img
+                            src={matchedProfile.photo || matchedProfile.photos[0]}
+                            alt="Match"
+                            className="match-celebration-avatar"
                         />
                     </div>
-
                     <button
                         className="btn btn-dark-solid btn-lg mb-4 text-white"
                         style={{ width: 'auto', padding: '15px 50px', backgroundColor: '#fd5c63', border: 'none' }}
                         onClick={() => {
                             closeCelebration();
-                            // 👇 FIX: Yahan bhi same logic lagana hoga chat open karne ke liye 👇
+                            // 👇 FIX: Agar match_id nahi mili, toh normal id pass hogi
                             openChat(
-                                matchedProfile.id, 
-                                matchedProfile.name, 
+                                matchedProfile.match_id || matchedProfile.id,
+                                matchedProfile.name,
                                 matchedProfile.photo || matchedProfile.photos[0]
                             );
                         }}

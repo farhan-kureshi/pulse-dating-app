@@ -255,49 +255,69 @@ def get_discovery_profiles(request, user_id):
 
     except Exception as e:
         return Response({"error": str(e)}, status=500)
-    
 @api_view(['POST'])
 def record_swipe(request):
-    """
-    User ke Like (Right) ya Pass (Left) swipe ko database mein save karta hai.
-    Aur agar dono taraf se Like ho, toh 'Match' create karta hai.
-    """
     swiper_id = request.data.get('swiper_id')
     swiped_on_id = request.data.get('swiped_on_id')
-    is_like = request.data.get('is_like') # True for Right Swipe, False for Left
-    is_superlike = request.data.get('is_superlike', False)
+    
+    # 👇 NAYA ULTIMATE FIX: React kisi bhi naam se data bheje, ye pakad lega! 👇
+    is_like = (
+        str(request.data.get('is_like', '')).lower() in ['true', '1', 'yes', 't'] or 
+        str(request.data.get('direction', '')).lower() == 'right' or 
+        str(request.data.get('action', '')).lower() == 'like'
+    )
+    
+    is_superlike = (
+        str(request.data.get('is_superlike', '')).lower() in ['true', '1', 'yes', 't'] or 
+        str(request.data.get('direction', '')).lower() == 'up' or
+        str(request.data.get('action', '')).lower() == 'superlike'
+    )
+
+    # Agar Superlike kiya hai (Up Swipe), toh Like toh of course hoga hi
+    if is_superlike:
+        is_like = True
 
     try:
         swiper = UserProfile.objects.get(id=swiper_id)
         swiped_on = UserProfile.objects.get(id=swiped_on_id)
 
-        # Swipe record karo
+        # Swipe database mein save karo
         swipe, created = Swipe.objects.get_or_create(
             swiper=swiper,
             swiped_on=swiped_on,
             defaults={'is_like': is_like, 'is_superlike': is_superlike}
         )
 
-        # Agar pehle se swipe kiya tha, toh usko update kar do
+        # Update karo agar pehle pass kiya tha ab like kar raha hai
         if not created: 
             swipe.is_like = is_like
             swipe.is_superlike = is_superlike
             swipe.save()
 
         match_created = False
+        match_id = None  
         
-        # MAGIC LOGIC: Agar Farhan ne Like kiya hai, toh check karo kya saamne wale ne bhi pehle Like kiya tha?
+        # Agar is_like True hai, tabhi Match check hoga
         if is_like:
-            reverse_swipe = Swipe.objects.filter(swiper=swiped_on, swiped_on=swiper, is_like=True).first()
+            reverse_swipe = Swipe.objects.filter(
+                swiper=swiped_on, 
+                swiped_on=swiper, 
+                is_like=True
+            ).exists()
+            
             if reverse_swipe:
-                # It's a Match! Match table mein entry daal do
-                Match.objects.get_or_create(user1=swiper, user2=swiped_on)
+                new_match, is_new = Match.objects.get_or_create(user1=swiper, user2=swiped_on)
                 match_created = True
+                match_id = new_match.id  
 
-        return Response({"message": "Swipe saved successfully!", "match": match_created})
+        return Response({
+            "message": "Swipe saved successfully!", 
+            "match": match_created,
+            "match_id": match_id
+        })
+        
     except Exception as e:
         return Response({"error": str(e)}, status=400)
-
 @api_view(['GET'])
 def get_sidebar_data(request, user_id):
     """
@@ -312,10 +332,10 @@ def get_sidebar_data(request, user_id):
         match_list = []
         for m in matches:
             other_user = m.user2 if m.user1 == user else m.user1
-            # 👇 FIX: 'photo_1' ki jagah wapas 'profile_pic_1' kar diya 👇
             photo_url = base_url + other_user.profile_pic_1.url if other_user.profile_pic_1 else "/default-avatar.png"
             match_list.append({
                 "id": other_user.id,
+                "match_id": m.id,  # 👇 YEH LINE MISSING THI! Iske bina React confuse tha.
                 "name": other_user.first_name or "Unknown",
                 "photo": photo_url
             })
@@ -338,7 +358,6 @@ def get_sidebar_data(request, user_id):
                 today = date.today()
                 age = today.year - u.dob.year - ((today.month, today.day) < (u.dob.month, u.dob.day))
 
-            # 👇 FIX: Yahan bhi saari images ko 'profile_pic_X' kar diya 👇
             liked_you_list.append({
                 "id": u.id,
                 "name": u.first_name or "Someone",
@@ -368,10 +387,10 @@ def get_sidebar_data(request, user_id):
     except Exception as e:
         print(f"Sidebar API Error: {str(e)}") 
         return Response({"error": str(e)}, status=400)
+    
 @api_view(['GET', 'POST'])
 def chat_messages(request, match_id): 
-    # Yahan 'match_id' actually samne wale user ka ID (jaise 16) aa raha hai
-    
+    # 👇 NAYA: Ab 'match_id' sach mein Match table ki ID hai!
     current_user_id = request.GET.get('user_id')
     if request.method == 'POST':
         current_user_id = request.data.get('sender_id')
@@ -379,19 +398,20 @@ def chat_messages(request, match_id):
     if not current_user_id:
         return Response({"error": "User ID missing"}, status=400)
 
-    # Database mein dono users ka Match record dhoondho
+    # 👇 ASLI FIX YAHAN HAI: Match dhoondne ka tarika theek kiya
     try:
-        match = Match.objects.get(
-            (Q(user1_id=current_user_id) & Q(user2_id=match_id)) |
-            (Q(user1_id=match_id) & Q(user2_id=current_user_id))
-        )
+        match = Match.objects.get(id=match_id)
     except Match.DoesNotExist:
         return Response({"error": "Match nahi mila!"}, status=404)
 
    # 1. Purane messages fetch karna
     if request.method == 'GET':
-        # NAYA: Jaise hi user chat open kare, samne wale ke saare unread messages ko Read (True) kar do
-        Message.objects.filter(match=match, sender_id=match_id, is_read=False).update(is_read=True)        
+        # Samne wale ka ID nikalna taaki uske bheje messages ko Read kar sakein
+        other_user_id = match.user2.id if match.user1.id == int(current_user_id) else match.user1.id
+        
+        # NAYA: Samne wale ke saare unread messages ko Read (True) kar do
+        Message.objects.filter(match=match, sender_id=other_user_id, is_read=False).update(is_read=True)        
+        
         messages = Message.objects.filter(match=match).exclude(hidden_by_user=int(current_user_id)).order_by('timestamp')
         serializer = MessageSerializer(messages, many=True)
         return Response(serializer.data)
@@ -414,31 +434,23 @@ def get_chat_list(request, user_id):
 
     for match in matches:
         other_user = match.user2 if match.user1.id == int(user_id) else match.user1
-        
-        # 👇 NAYA: Last message dhoondte waqt hide kiye hue messages ko mat gino
         last_msg = Message.objects.filter(match=match).exclude(hidden_by_user=int(user_id)).order_by('-timestamp').first()
         
-        if last_msg:
-            # 👇 NAYA: Unread count mein bhi hide kiye hue exclude karein
-            unread_count = Message.objects.filter(match=match, sender=other_user, is_read=False).exclude(hidden_by_user=int(user_id)).count()
-            
-            photo_url = other_user.profile_pic_1.url if other_user.profile_pic_1 else '/default-avatar.png'
-            # (Aage ka code waisa hi rahega: chat_list_data.append(...) )
-            
-            chat_list_data.append({
-                'other_user_id': other_user.id,
-                'name': other_user.first_name,
-                'photo': request.build_absolute_uri(photo_url) if hasattr(request, 'build_absolute_uri') else f"http://127.0.0.1:8000{photo_url}",
-                'last_message': last_msg.content,
-                'last_message_time': last_msg.timestamp,
-                'is_read': last_msg.is_read,
-                'sender_id': last_msg.sender.id,
-                'unread_count': unread_count # 👇 NAYA: Ise React mein bhejenge
-            })
+        # match_id yahan se jayegi tabhi React use pakad payega
+        chat_list_data.append({
+            'match_id': match.id,  # 👈 YEH LINE MISSING THI
+            'other_user_id': other_user.id,
+            'name': other_user.first_name,
+            'photo': f"http://127.0.0.1:8000{other_user.profile_pic_1.url}" if other_user.profile_pic_1 else '/default-avatar.png',
+            'last_message': last_msg.content if last_msg else "No messages yet",
+            'last_message_time': last_msg.timestamp if last_msg else match.matched_at,
+            'is_read': last_msg.is_read if last_msg else False,
+            'sender_id': last_msg.sender.id if last_msg else None,
+            'unread_count': Message.objects.filter(match=match, sender=other_user, is_read=False).count()
+        })
 
     chat_list_data.sort(key=lambda x: x['last_message_time'], reverse=True)
     return Response(chat_list_data)
-
 
 @api_view(['POST'])
 def block_user(request):
@@ -618,34 +630,38 @@ def admin_toggle_block(request):
         return Response({"message": "User block status updated", "is_banned": user.is_banned})
     except Exception as e:
         return Response({"error": str(e)}, status=400)    
-    
 @api_view(['GET'])
 def get_swipe_logs(request):
     try:
-        # Latest 50 swipes nikalna
         swipes = Swipe.objects.all().order_by('-timestamp')[:50]
         logs = []
 
         for s in swipes:
             swiper_obj = s.swiper 
-            target_obj = s.swiped_on # 👈 Yahan 'target' ki jagah 'swiped_on' aayega
+            target_obj = s.swiped_on 
 
-            # Check for Match (Match model mein fields 'user1' aur 'user2' hain)
             is_match = Match.objects.filter(user1=swiper_obj, user2=target_obj).exists() or \
                        Match.objects.filter(user1=target_obj, user2=swiper_obj).exists()
+
+            # 👇 NAYA: Admin panel ke liye exact Action pata lagana
+            if getattr(s, 'is_superlike', False):
+                action = "Super Liked 🌟"
+            elif getattr(s, 'is_like', False):
+                action = "Liked ❤️"
+            else:
+                action = "Passed ❌"
 
             logs.append({
                 "id": s.id,
                 "swiper_name": swiper_obj.first_name if swiper_obj.first_name else "User",
                 "target_name": target_obj.first_name if target_obj.first_name else "User",
-                "swipe_type": "Liked ❤️" if (getattr(s, 'is_like', False) or getattr(s, 'is_superlike', False)) else "Passed ❌",
+                "swipe_type": action,
                 "is_match": is_match,
                 "time": s.timestamp.strftime("%d %b, %I:%M %p")
             })
 
         return Response(logs)
     except Exception as e:
-        print(f"Swipe Logs Error: {str(e)}")
         return Response({"error": str(e)}, status=500)
     
 @api_view(['POST'])

@@ -65,6 +65,7 @@ class Message(models.Model):
     match = models.ForeignKey(Match, related_name='messages', on_delete=models.CASCADE)
     sender = models.ForeignKey(UserProfile, related_name='sent_messages', on_delete=models.CASCADE)
     content = models.TextField()
+    image = models.ImageField(upload_to='chat_images/', null=True, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
     image = models.ImageField(upload_to='chat_images/', null=True, blank=True)

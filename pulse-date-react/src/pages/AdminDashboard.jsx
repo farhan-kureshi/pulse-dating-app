@@ -10,7 +10,7 @@ const AdminDashboard = () => {
     const [swipeLogs, setSwipeLogs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [transactions, setTransactions] = useState([]);
-    
+
     // UI states
     const [isCollapsed, setIsCollapsed] = useState(false); // To toggle sidebar collapse on desktop
     const [isMobileOpen, setIsMobileOpen] = useState(false); // To toggle sidebar on mobile
@@ -163,7 +163,7 @@ const AdminDashboard = () => {
 
                     <img className="brand-logo" src="/pulseicon.jpeg" alt="Pulse Logo" />
                     <span className="admin-brand-text">Pulse Admin</span>
-                    
+
                     <i className="fa-solid fa-xmark d-lg-none ms-auto text-white" style={{ cursor: 'pointer' }} onClick={() => setIsMobileOpen(false)}></i>
                 </div>
 
@@ -406,8 +406,12 @@ const AdminDashboard = () => {
                                         <tr key={log.id} style={{ borderBottom: '1px solid #334155' }}>
                                             <td style={{ padding: '15px', fontWeight: '600' }}>{log.swiper_name}</td>
                                             <td style={{ padding: '15px' }}>
-                                                <span style={{ color: log.swipe_type === 'Right' ? '#22c55e' : '#ef4444', fontWeight: 'bold' }}>
-                                                    {log.swipe_type === 'Right' ? 'Liked ❤️' : 'Passed ❌'}
+                                                <span style={{
+                                                    fontWeight: 'bold',
+                                                    color: log.swipe_type.includes('Liked') ? '#17e27a' : (log.swipe_type.includes('Super Liked') ? '#2196f3' : '#fd5c63')
+                                                }}>
+                                                    {/* 👇 Backend se jo asali text aa raha hai, seedha wahi dikhao */}
+                                                    {log.swipe_type}
                                                 </span>
                                             </td>
                                             <td style={{ padding: '15px' }}>{log.target_name}</td>
