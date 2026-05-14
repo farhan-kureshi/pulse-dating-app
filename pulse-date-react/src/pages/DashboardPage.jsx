@@ -6,6 +6,11 @@ import EmojiPicker from 'emoji-picker-react';
 const DashboardPage = () => {
     // --- CORE STATES ---
     const [activeTab, setActiveTab] = useState('matches');
+
+    const [isFilterOpen, setIsFilterOpen] = useState(false);
+    const [distance, setDistance] = useState(25);
+    const [age, setAge] = useState(24);
+    const [preferredGender, setPreferredGender] = useState('Everyone');
     // --- SIDEBAR DATA STATE ---
     const [sidebarData, setSidebarData] = useState({ matches: [], liked_you: [] });
     const [profiles, setProfiles] = useState([]);
@@ -119,13 +124,14 @@ const DashboardPage = () => {
                         setEditInterests(data.interests.split(', '));
                     }
 
-                    // 4. Setup Profile Picture and ALL 6 Photos in the Grid
+                  // 4. Setup Profile Picture and ALL 6 Photos in the Grid
                     setEditPhotos((prevPhotos) => {
                         const updatedPhotos = [...prevPhotos];
                         for (let i = 1; i <= 6; i++) {
                             const photoUrl = data[`photo_${i}`];
                             if (photoUrl) {
-                                updatedPhotos[i - 1] = `http://127.0.0.1:8000${photoUrl}`;
+                                // 👇 FIX: Agar Cloudinary ka link hai toh waise hi use karo
+                                updatedPhotos[i - 1] = photoUrl.startsWith('http') ? photoUrl : `http://127.0.0.1:8000${photoUrl}`;
                             }
                         }
                         return updatedPhotos;
@@ -133,7 +139,8 @@ const DashboardPage = () => {
 
                     // Sidebar DP hamesha photo_1 rahegi
                     if (data.photo_1) {
-                        setMainDp(`http://127.0.0.1:8000${data.photo_1}`);
+                        // 👇 FIX: Main DP ke liye bhi same check
+                        setMainDp(data.photo_1.startsWith('http') ? data.photo_1 : `http://127.0.0.1:8000${data.photo_1}`);
                     }
 
                 }
@@ -274,7 +281,7 @@ const DashboardPage = () => {
         formData.append('last_name', editLastName);
         formData.append('dob', editDob);
         formData.append('bio', editBio);
-        formData.append('intent', `${editIntent.icon} ${editIntent.text}`); // Combine icon and text
+        formData.append('intent', `${editIntent.icon} ${editIntent.text}`);// Combine icon and text
 
         // Add new fields to the form data
         formData.append('city', editCity);
@@ -905,10 +912,7 @@ const DashboardPage = () => {
         rzp1.open();
     };
 
-    const [isFilterOpen, setIsFilterOpen] = useState(false);
-    const [distance, setDistance] = useState(25);
-    const [age, setAge] = useState(24);
-    const [preferredGender, setPreferredGender] = useState('Everyone');
+
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [isSidebarMobileOpen, setIsSidebarMobileOpen] = useState(false);
     const [showPremiumModal, setShowPremiumModal] = useState(false);
@@ -973,7 +977,7 @@ const DashboardPage = () => {
                     <div className={`tab-btn ${activeTab === 'messages' ? 'active' : ''}`} onClick={() => setActiveTab('messages')}>Messages</div>
                 </div>
 
-{/* Tab Content */}
+                {/* Tab Content */}
                 <div className="sidebar-content">
                     {activeTab === 'matches' ? (
                         <div>
@@ -1052,10 +1056,10 @@ const DashboardPage = () => {
                                 activeChatList.map((chat) => {
                                     const isMe = chat.sender_id == localStorage.getItem('user_id');
                                     return (
-                                        <div 
-                                            key={`chatlist-${chat.other_user_id}`} 
-                                            className="list-item" 
-                                            onClick={() => openChat(chat.match_id, chat.name, chat.photo)} 
+                                        <div
+                                            key={`chatlist-${chat.other_user_id}`}
+                                            className="list-item"
+                                            onClick={() => openChat(chat.match_id, chat.name, chat.photo)}
                                             style={{ cursor: 'pointer' }}
                                         >
                                             <div className="list-avatar-box">
@@ -1332,10 +1336,11 @@ const DashboardPage = () => {
                                 <div className="form-floating">
                                     <select className="form-select border-0 border-bottom rounded-0 shadow-none" value={editDrinking} onChange={(e) => setEditDrinking(e.target.value)}>
                                         <option value="" disabled>Select Drinking Habit</option>
-                                        <option>Socially 🍻</option>
-                                        <option>Never 🚫</option>
-                                        <option>Frequently 🍷</option>
-                                        <option>Planning to quit 🛑</option>
+                                        {/* 👇 NAYA: Yahan humne value="" add kar diya hai */}
+                                        <option value="Socially">Socially 🍻</option>
+                                        <option value="Never">Never 🚫</option>
+                                        <option value="Frequently">Frequently 🍷</option>
+                                        <option value="Planning to quit">Planning to quit 🛑</option>
                                     </select>
                                     <label>Drinking 🥂</label>
                                 </div>
@@ -1756,7 +1761,18 @@ const DashboardPage = () => {
                             <button type="button" className="btn-close position-absolute end-0 me-4" data-bs-dismiss="modal"></button>
                         </div>
                         <div className="modal-body text-center p-4">
-                            <p className="text-muted small mb-4">{editInterests.length}/7 selected</p>
+                            <div className="d-flex justify-content-center align-items-center gap-3 mb-4">
+                                <span className="text-muted small">{editInterests.length}/7 selected</span>
+                                {editInterests.length > 0 && (
+                                    <span
+                                        className="text-danger small fw-bold"
+                                        style={{ cursor: 'pointer', borderBottom: '1px solid red' }}
+                                        onClick={() => setEditInterests([])}
+                                    >
+                                        Clear All
+                                    </span>
+                                )}
+                            </div>
                             <div className="d-flex flex-wrap gap-2 justify-content-center tag-cloud-premium">
                                 {[
                                     '☕ Coffee', '🐶 Dogs', '🐱 Cats', '🍕 Foodie', '✈️ Travel',
