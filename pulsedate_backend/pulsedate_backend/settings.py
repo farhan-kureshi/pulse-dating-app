@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 import os
 from pathlib import Path
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -42,6 +45,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'core', 
     'channels',
+    'cloudinary',
+    'cloudinary_storage',
 ]
 
 MIDDLEWARE = [
@@ -85,13 +90,17 @@ ASGI_APPLICATION = 'pulsedate_backend.asgi.application' # 👈 NAYA
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'pulsedate_db',      # Aapke database ka naam
-        'USER': 'root',              # Default user
-        'PASSWORD': '',              # Agar aapka MySQL password hai toh yahan likho, warna khali chhod do
-        'HOST': 'localhost',
-       'PORT': '3306',
+        'NAME': 'defaultdb',
+        'USER': 'avnadmin',
+        'PASSWORD': 'AVNS_hvMtkTGVyqBt6tsNp_W',
+        'HOST': 'mysql-1548b31-pulsedate-project.d.aivencloud.com',
+        'PORT': '17223',
         'OPTIONS': {
-            'charset': 'utf8mb4',
+            'ssl': {
+                'ca': os.path.join(BASE_DIR, 'ca.pem'),
+            },
+            'charset': 'utf8mb4', # 👈 YEH NAYI LINE ADD KAREIN
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES', NAMES 'utf8mb4'",
         },
     }
 }
@@ -144,3 +153,21 @@ CHANNEL_LAYERS = {
         "BACKEND": "channels.layers.InMemoryChannelLayer"
     }
 }
+# ==========================================
+# CLOUDINARY CLOUD STORAGE SETTINGS
+# ==========================================
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'dd63u5c9j',
+    'API_KEY': '345264863295516',
+    'API_SECRET': 'yCjRbu0LTivO31K8VtthLokr684',
+}
+
+# Yeh configuration zaroori hai taaki upload smooth ho
+cloudinary.config( 
+    cloud_name = "dd63u5c9j", 
+    api_key = "345264863295516", 
+    api_secret = "yCjRbu0LTivO31K8VtthLokr684" 
+)
+
+# Django ko batana ki media files (photos) Cloudinary par bhejni hain
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
