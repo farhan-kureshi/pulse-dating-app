@@ -4,6 +4,8 @@ import { motion, useMotionValue, useTransform } from 'framer-motion';
 import PremiumModal from './PremiumModal';
 import EmojiPicker from 'emoji-picker-react';
 const DashboardPage = () => {
+    const BASE_URL = "https://pulse-dating-app-4njq.onrender.com";
+    const WS_URL = "wss://pulse-dating-app-4njq.onrender.com";
     // --- CORE STATES ---
     const [activeTab, setActiveTab] = useState('matches');
 
@@ -96,7 +98,7 @@ const DashboardPage = () => {
             }
 
             try {
-                const response = await fetch(`http://127.0.0.1:8000/api/get-profile/${userId}/`);
+                const response = await fetch(`https://pulse-dating-app-4njq.onrender.com/api/get-profile/${userId}/`);
                 const data = await response.json();
 
                 if (response.ok) {
@@ -124,14 +126,15 @@ const DashboardPage = () => {
                         setEditInterests(data.interests.split(', '));
                     }
 
-                  // 4. Setup Profile Picture and ALL 6 Photos in the Grid
+                    // 4. Setup Profile Picture and ALL 6 Photos in the Grid
                     setEditPhotos((prevPhotos) => {
                         const updatedPhotos = [...prevPhotos];
                         for (let i = 1; i <= 6; i++) {
                             const photoUrl = data[`photo_${i}`];
                             if (photoUrl) {
                                 // 👇 FIX: Agar Cloudinary ka link hai toh waise hi use karo
-                                updatedPhotos[i - 1] = photoUrl.startsWith('http') ? photoUrl : `http://127.0.0.1:8000${photoUrl}`;
+                                // Naya Logic
+                                updatedPhotos[i - 1] = photoUrl.startsWith('http') ? photoUrl : `${BASE_URL}${photoUrl}`;
                             }
                         }
                         return updatedPhotos;
@@ -140,7 +143,7 @@ const DashboardPage = () => {
                     // Sidebar DP hamesha photo_1 rahegi
                     if (data.photo_1) {
                         // 👇 FIX: Main DP ke liye bhi same check
-                        setMainDp(data.photo_1.startsWith('http') ? data.photo_1 : `http://127.0.0.1:8000${data.photo_1}`);
+                       setMainDp(data.photo_1.startsWith('http') ? data.photo_1 : `${BASE_URL}${data.photo_1}`);
                     }
 
                 }
@@ -164,7 +167,7 @@ const DashboardPage = () => {
 
         try {
             // Passing Age and Gender in the URL
-            const response = await fetch(`http://127.0.0.1:8000/api/discovery/${userId}/?age=${age}&gender=${preferredGender}`);
+            const response = await fetch(`https://pulse-dating-app-4njq.onrender.com/api/discovery/${userId}/?age=${age}&gender=${preferredGender}`);
             const data = await response.json();
 
             if (response.ok) {
@@ -192,7 +195,7 @@ const DashboardPage = () => {
             if (!userId) return;
 
             try {
-                const response = await fetch(`http://127.0.0.1:8000/api/sidebar-data/${userId}/`);
+                const response = await fetch(`https://pulse-dating-app-4njq.onrender.com/api/sidebar-data/${userId}/`);
                 const data = await response.json();
 
                 if (response.ok) {
@@ -304,7 +307,7 @@ const DashboardPage = () => {
         });
 
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/update-profile/', {
+            const response = await fetch('https://pulse-dating-app-4njq.onrender.com/api/update-profile/', {
                 method: 'POST',
                 body: formData
             });
@@ -378,7 +381,7 @@ const DashboardPage = () => {
             const isSuperLike = (direction === 'up');
 
             try {
-                const response = await fetch('http://127.0.0.1:8000/api/swipe/', {
+                const response = await fetch('https://pulse-dating-app-4njq.onrender.com/api/swipe/', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -480,7 +483,7 @@ const DashboardPage = () => {
     const fetchBlockedUsers = async () => {
         const userId = localStorage.getItem('user_id');
         try {
-            const response = await fetch(`http://127.0.0.1:8000/api/blocked-users/${userId}/`);
+            const response = await fetch(`https://pulse-dating-app-4njq.onrender.com/api/blocked-users/${userId}/`);
             if (response.ok) {
                 const data = await response.json();
                 setBlockedUsers(data);
@@ -492,7 +495,7 @@ const DashboardPage = () => {
 
     const handleUnblock = async (blockedId) => {
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/unblock-user/', {
+            const response = await fetch('https://pulse-dating-app-4njq.onrender.com/api/unblock-user/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -622,7 +625,7 @@ const DashboardPage = () => {
         const userId = localStorage.getItem('user_id'); // Apna ID nikala
         try {
             // API url mein ?user_id= karke apna ID bhi bhej diya
-            const response = await fetch(`http://127.0.0.1:8000/api/chat/${otherUserId}/?user_id=${userId}`);
+            const response = await fetch(`https://pulse-dating-app-4njq.onrender.com/api/chat/${otherUserId}/?user_id=${userId}`);
             const data = await response.json();
             if (response.ok) {
                 setChatMessages(data);
@@ -640,7 +643,7 @@ const DashboardPage = () => {
             fetchMessages(chatData.matchId);
             const userId = localStorage.getItem('user_id');
             // Naya WebSocket (Live Pipe) connection banao
-            ws = new WebSocket(`ws://127.0.0.1:8000/ws/chat/${chatData.matchId}/?user_id=${userId}`);
+           ws = new WebSocket(`${WS_URL}/ws/chat/${chatData.matchId}/?user_id=${userId}`);
             ws.onopen = () => {
                 console.log("WebSocket Connected Successfully! 🚀");
             };
@@ -739,7 +742,7 @@ const DashboardPage = () => {
             const userId = localStorage.getItem('user_id');
             if (!userId) return;
             try {
-                const response = await fetch(`http://127.0.0.1:8000/api/chat-list/${userId}/`);
+                const response = await fetch(`https://pulse-dating-app-4njq.onrender.com/api/chat-list/${userId}/`);
                 if (response.ok) {
                     const data = await response.json();
                     setActiveChatList(data);
@@ -844,7 +847,7 @@ const DashboardPage = () => {
         const confirmBlock = window.confirm("Report & Block this user? They will be removed from your matches permanently.");
         if (confirmBlock) {
             try {
-                const response = await fetch('http://127.0.0.1:8000/api/block-user/', {
+                const response = await fetch('https://pulse-dating-app-4njq.onrender.com/api/block-user/', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -872,7 +875,7 @@ const DashboardPage = () => {
         if (selectedPlan === '12months') { amount = 149 * 12; months = 12; }
 
         // 1. Backend ko dynamic amount bhejo
-        const res = await fetch('http://127.0.0.1:8000/api/create-order/', {
+        const res = await fetch('https://pulse-dating-app-4njq.onrender.com/api/create-order/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ amount: amount })
@@ -888,7 +891,7 @@ const DashboardPage = () => {
             order_id: order.id,
             handler: async function (response) {
                 // 2. Success hone par backend ko mahine bhejo taaki expiry date set ho
-                const verifyRes = await fetch('http://127.0.0.1:8000/api/verify-payment/', {
+                const verifyRes = await fetch('https://pulse-dating-app-4njq.onrender.com/api/verify-payment/', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -1579,7 +1582,7 @@ const DashboardPage = () => {
                                                                 return (
                                                                     <div key={imgIndex} style={{ position: 'relative' }}>
                                                                         <img
-                                                                            src={imgMsg.image?.startsWith('http') ? imgMsg.image : `http://127.0.0.1:8000${imgMsg.image}`}
+                                                                            src={imgMsg.image?.startsWith('http') ? imgMsg.image : `https://pulse-dating-app-4njq.onrender.com${imgMsg.image}`}
                                                                             alt="Sent file"
                                                                             onClick={(e) => { e.stopPropagation(); setZoomImage(imgMsg.image); }}
                                                                             style={{ width: imgSize, height: imgSize, objectFit: 'cover', borderRadius: '8px', display: 'block' }}
@@ -1599,7 +1602,7 @@ const DashboardPage = () => {
                                                                 {/* Image sirf tabhi dikhegi jab database mein image hogi */}
                                                                 {group.image && (
                                                                     <img
-                                                                        src={group.image?.startsWith('http') ? group.image : `http://127.0.0.1:8000${group.image}`}
+                                                                        src={group.image?.startsWith('http') ? group.image : `https://pulse-dating-app-4njq.onrender.com${group.image}`}
                                                                         alt="Sent file"
                                                                         onClick={(e) => { e.stopPropagation(); setZoomImage(group.image); }}
                                                                         style={{ width: '260px', height: '280px', objectFit: 'cover', borderRadius: '8px', display: 'block', marginBottom: '5px' }}
@@ -1958,7 +1961,7 @@ const DashboardPage = () => {
                     </i>
 
                     <img
-                        src={`http://127.0.0.1:8000${zoomImage}`}
+                        src={`https://pulse-dating-app-4njq.onrender.com${zoomImage}`}
                         style={{ maxWidth: '90%', maxHeight: '90%', borderRadius: '10px', objectFit: 'contain' }}
                         alt="Zoomed"
                     />
