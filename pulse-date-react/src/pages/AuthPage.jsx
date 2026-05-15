@@ -55,7 +55,7 @@ const AuthPage = () => {
     // 👇 NAYA: Ab jab tak fix 10 digit nahi honge, OTP nahi bhejega
     if (phoneNumber.length === 10) { 
       try {
-        const res = await fetch('http://127.0.0.1:8000/api/send-otp/', {
+        const res = await fetch('https://pulse-dating-app-4njq.onrender.com/api/send-otp/', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ phone_number: phoneNumber })
@@ -80,7 +80,7 @@ const AuthPage = () => {
     e.preventDefault();
     if (otp.length === 4) {
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/login/', {
+        const response = await fetch('https://pulse-dating-app-4njq.onrender.com/api/login/', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ phone_number: phoneNumber, mode: mode, otp: otp })
@@ -146,7 +146,7 @@ const AuthPage = () => {
     try {
       // IMPORTANT: When using FormData, do NOT set the 'Content-Type' header.
       // The browser automatically sets it to 'multipart/form-data' with the correct boundary.
-      const response = await fetch('http://127.0.0.1:8000/api/update-profile/', {
+      const response = await fetch('https://pulse-dating-app-4njq.onrender.com/api/update-profile/', {
         method: 'POST',
         body: formData
       });

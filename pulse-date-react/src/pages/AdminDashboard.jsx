@@ -18,7 +18,7 @@ const AdminDashboard = () => {
     // --- 1. FETCH FUNCTIONS (Outside useEffect) ---
     const fetchAdminData = async () => {
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/admin-data/');
+            const response = await fetch('https://pulse-dating-app-4njq.onrender.com/api/admin-data/');
             if (response.ok) {
                 const data = await response.json();
                 setUsers(data.users);
@@ -30,7 +30,7 @@ const AdminDashboard = () => {
 
     const fetchFinanceData = async () => {
         try {
-            const res = await fetch('http://127.0.0.1:8000/api/admin/transactions/');
+            const res = await fetch('https://pulse-dating-app-4njq.onrender.com/api/admin/transactions/');
             if (res.ok) {
                 const txData = await res.json();
                 setTransactions(txData);
@@ -40,7 +40,7 @@ const AdminDashboard = () => {
 
     const fetchSwipeLogs = async () => {
         try {
-            const logRes = await fetch('http://127.0.0.1:8000/api/admin/swipe-logs/');
+            const logRes = await fetch('https://pulse-dating-app-4njq.onrender.com/api/admin/swipe-logs/');
             if (logRes.ok) {
                 const logData = await logRes.json();
                 setSwipeLogs(logData);
@@ -71,7 +71,7 @@ const AdminDashboard = () => {
     // --- REAL DATABASE ACTIONS ---
     const toggleVIP = async (userId) => {
         try {
-            const res = await fetch('http://127.0.0.1:8000/api/admin/toggle-vip/', {
+            const res = await fetch('https://pulse-dating-app-4njq.onrender.com/api/admin/toggle-vip/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ user_id: userId })
@@ -95,7 +95,7 @@ const AdminDashboard = () => {
 
     const toggleVerify = async (userId) => {
         try {
-            const res = await fetch('http://127.0.0.1:8000/api/admin/toggle-verify/', {
+            const res = await fetch('https://pulse-dating-app-4njq.onrender.com/api/admin/toggle-verify/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ user_id: userId })
@@ -113,7 +113,7 @@ const AdminDashboard = () => {
         const actionText = isBanned ? "UNBLOCK" : "BLOCK";
         if (window.confirm(`Are you sure you want to ${actionText} this user?`)) {
             try {
-                const res = await fetch('http://127.0.0.1:8000/api/admin/toggle-block/', {
+                const res = await fetch('https://pulse-dating-app-4njq.onrender.com/api/admin/toggle-block/', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ user_id: userId })
@@ -131,7 +131,7 @@ const AdminDashboard = () => {
 
         if (confirmDelete) {
             try {
-                const res = await fetch('http://127.0.0.1:8000/api/admin/delete-user/', {
+                const res = await fetch('https://pulse-dating-app-4njq.onrender.com/api/admin/delete-user/', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ user_id: userId })
