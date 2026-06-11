@@ -289,8 +289,7 @@ const AuthPage = () => {
                     <hr className="flex-grow-1 opacity-25" /><span className="mx-3 text-muted small fw-bold">OR</span><hr className="flex-grow-1 opacity-25" />
                   </div>
                   {/* 👇 NAYA GOOGLE LOGIN BUTTON 👇 */}
-                  <GoogleOAuthProvider clientId="312371188277-rf1p2ic4n0cgn9g0u6gusdnu4rk4n3lt.apps.googleusercontent.com
-">
+                  <GoogleOAuthProvider clientId="312371188277-rf1p2ic4n0cgn9g0u6gusdnu4rk4n3lt.apps.googleusercontent.com">
                     <div className="d-flex justify-content-center mb-3 w-100">
                       <GoogleLogin
                         onSuccess={async (credentialResponse) => {
