@@ -172,3 +172,11 @@ cloudinary.config(
 
 # Django ko batana ki media files (photos) Cloudinary par bhejni hain
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+# 👇 GMAIL SMTP SETTINGS FOR OTP 👇
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'kureshif624@gmail.com'  # Aapka Gmail address
+EMAIL_HOST_PASSWORD = 'bozgjlwuflhcguvt'  # Aapka 16-digit Google App Password
