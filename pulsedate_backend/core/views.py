@@ -7,6 +7,7 @@ from .models import Message, Match
 from .serializers import MessageSerializer
 from .models import UserProfile, Swipe, Match, Message, BlockList, Transaction
 import razorpay
+from django.core.mail import send_mail
 from django.conf import settings
 from datetime import timedelta
 from django.utils import timezone
@@ -697,26 +698,48 @@ def get_admin_transactions(request):
     
 @api_view(['POST'])
 def send_real_otp(request):
-    phone = request.data.get('phone_number')
+    phone_or_email = request.data.get('phone_number') # Frontend isko 'phone_number' hi bhej raha hai
     
-    if not phone or len(phone) != 10:
-        return Response({"error": "Mobile number exactly 10 digits ka hona chahiye."}, status=400)
+    if not phone_or_email:
+        return Response({"error": "Email ya Phone number zaruri hai."}, status=400)
         
     otp = str(random.randint(1000, 9999)) # 4 digit OTP
+    
+    # Check karein ki user ne Email daala hai ya Phone Number
+    is_email = '@' in phone_or_email and '.' in phone_or_email
+    
+    if is_email:
+        # --- GMAIL SE BHEJNE KA LOGIC ---
+        try:
+            send_mail(
+                subject='Your PulseDate Verification Code',
+                message=f'Hello! Your PulseDate login code is: {otp}. Do not share this with anyone.',
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[phone_or_email],
+                fail_silently=False,
+            )
+            print(f"📧 Email sent successfully to: {phone_or_email}")
+        except Exception as e:
+            return Response({"error": f"Failed to send email: {str(e)}"}, status=500)
+    else:
+        # --- PHONE NUMBER (TERMINAL LOGIC) ---
+        if len(phone_or_email) != 10:
+            return Response({"error": "Mobile number exactly 10 digits ka hona chahiye."}, status=400)
+            
+        print("\n" + "="*30)
+        print(f"🔥 PULSEDATE OTP HACK 🔥")
+        print(f"Number: {phone_or_email}")
+        print(f"OTP: {otp}")
+        print("="*30 + "\n")
+
+    # OTP ko Database mein save kar lo (donon case mein chalega)
     OTPRecord.objects.update_or_create(
-        phone_number=phone,
+        phone_number=phone_or_email,
         defaults={'otp': otp, 'timestamp': timezone.now()}
     )
     
-    # 👇 ASLI JADOO: Yeh aapke VS Code terminal mein OTP dikhayega 👇
-    print("\n" + "="*30)
-    print(f"🔥 PULSEDATE OTP HACK 🔥")
-    print(f"Number: {phone}")
-    print(f"OTP: {otp}")
-    print("="*30 + "\n")
-    
-    # React ko bol do ki OTP bhej diya (bina kisi SMS API ke error ke)
-    return Response({"message": "OTP generated! Check VS Code terminal."})
+    # React ko bol do ki OTP bhej diya hai
+    return Response({"message": "OTP sent successfully!"})
 
 @api_view(['POST'])
 def login_user(request):
