@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './AuthPage.css';
-
+import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from "jwt-decode";
 
 const AuthPage = () => {
   const location = useLocation();
@@ -50,19 +51,19 @@ const AuthPage = () => {
     return Math.min(100, score);
   };
 
- const handleSendOtp = async (e) => {
+  const handleSendOtp = async (e) => {
     e.preventDefault();
     // 👇 NAYA: Ab jab tak fix 10 digit nahi honge, OTP nahi bhejega
-    if (phoneNumber.length === 10) { 
+    if (phoneNumber.length === 10) {
       try {
         const res = await fetch('https://pulse-dating-app-4njq.onrender.com/api/send-otp/', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ phone_number: phoneNumber })
         });
-        
+
         if (res.ok) {
-          setOtpSent(true); 
+          setOtpSent(true);
           alert("OTP Sent On VS Code Terminal.");
         } else {
           alert("Error sending OTP");
@@ -200,7 +201,7 @@ const AuthPage = () => {
       setPhotoFiles(newPhotoFiles);
     }
   };
- 
+
   return (
     <div className="auth-wrapper">
       {/* LEFT SIDE: STICKY IMAGE */}
@@ -254,20 +255,20 @@ const AuthPage = () => {
                   </div>
                 )}
 
-             <div className="premium-input-container mb-4">
+                <div className="premium-input-container mb-4">
                   <span className="country-code-auth">+91</span>
-                  <input 
-                    type="tel" 
-                    className="premium-input ps-5" 
-                    placeholder="Mobile number" 
+                  <input
+                    type="tel"
+                    className="premium-input ps-5"
+                    placeholder="Mobile number"
                     maxLength="10" /* 👇 NAYA: 10 se zyada type hi nahi hoga */
-                    value={phoneNumber} 
+                    value={phoneNumber}
                     onChange={(e) => {
                       // 👇 NAYA: Text/Alphabets type hone se rokega, sirf number lega
                       const onlyNums = e.target.value.replace(/[^0-9]/g, '');
                       setPhoneNumber(onlyNums);
-                    }} 
-                    required 
+                    }}
+                    required
                   />
                 </div>
 
@@ -287,9 +288,26 @@ const AuthPage = () => {
                   <div className="d-flex align-items-center mb-4">
                     <hr className="flex-grow-1 opacity-25" /><span className="mx-3 text-muted small fw-bold">OR</span><hr className="flex-grow-1 opacity-25" />
                   </div>
-                  <button className="btn btn-social w-100 mb-3 rounded-pill">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google" style={{ height: '20px', marginRight: '10px' }} /> Continue with Google
-                  </button>
+                  {/* 👇 NAYA GOOGLE LOGIN BUTTON 👇 */}
+                  <GoogleOAuthProvider clientId="312371188277-rf1p2ic4n0cgn9g0u6gusdnu4rk4n3lt.apps.googleusercontent.com
+">
+                    <div className="d-flex justify-content-center mb-3 w-100">
+                      <GoogleLogin
+                        onSuccess={async (credentialResponse) => {
+                          const decoded = jwtDecode(credentialResponse.credential);
+                          console.log("Google User Data:", decoded);
+                          // Yahan hum baad mein backend ka logic likhenge
+                        }}
+                        onError={() => {
+                          console.log('Google Login Failed');
+                          alert("Google Login Failed. Please try again.");
+                        }}
+                        useOneTap
+                        shape="pill"
+                        theme="filled_black"
+                      />
+                    </div>
+                  </GoogleOAuthProvider>
                   <button className="btn btn-social w-100 mb-4 rounded-pill">
                     <i className="fa-brands fa-apple fs-4 me-2"></i> Continue with Apple
                   </button>
