@@ -259,7 +259,7 @@ const handleSendOtp = async (e) => {
                   </div>
                 )}
 
-           <div className="premium-input-container mb-4">
+      <div className="premium-input-container mb-4">
                   <input
                     type="text"
                     className="premium-input"
@@ -268,7 +268,6 @@ const handleSendOtp = async (e) => {
                     onChange={(e) => setPhoneNumber(e.target.value)}
                   />
                 </div>
-
                 {otpSent && (
                   <div className="premium-input-container">
                     <input type="text" className="premium-input otp-input" placeholder="----" maxLength="4" onChange={(e) => setOtp(e.target.value)} required autoFocus />
