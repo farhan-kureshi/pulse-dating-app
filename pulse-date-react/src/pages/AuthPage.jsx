@@ -51,10 +51,14 @@ const AuthPage = () => {
     return Math.min(100, score);
   };
 
-  const handleSendOtp = async (e) => {
+const handleSendOtp = async (e) => {
     e.preventDefault();
-    // 👇 NAYA: Ab jab tak fix 10 digit nahi honge, OTP nahi bhejega
-    if (phoneNumber.length === 10) {
+    
+    // Check karte hain ki user ne Email daala hai ya Phone number
+    const isEmail = phoneNumber.includes('@') && phoneNumber.includes('.');
+    const isPhone = /^\d{10}$/.test(phoneNumber);
+
+    if (isEmail || isPhone) {
       try {
         const res = await fetch('https://pulse-dating-app-4njq.onrender.com/api/send-otp/', {
           method: 'POST',
@@ -73,7 +77,7 @@ const AuthPage = () => {
       }
     } else {
       // Agar 10 se kam ya zyada hai toh error dikhayega
-      alert("Not a valid phone number. Please enter exactly 10 digits.");
+      alert("Please enter a valid Email ID or a 10-digit Mobile Number.");
     }
   };
 
@@ -255,20 +259,13 @@ const AuthPage = () => {
                   </div>
                 )}
 
-                <div className="premium-input-container mb-4">
-                  <span className="country-code-auth">+91</span>
+           <div className="premium-input-container mb-4">
                   <input
-                    type="tel"
-                    className="premium-input ps-5"
-                    placeholder="Mobile number"
-                    maxLength="10" /* 👇 NAYA: 10 se zyada type hi nahi hoga */
+                    type="text"
+                    className="premium-input"
+                    placeholder="Email or Mobile number"
                     value={phoneNumber}
-                    onChange={(e) => {
-                      // 👇 NAYA: Text/Alphabets type hone se rokega, sirf number lega
-                      const onlyNums = e.target.value.replace(/[^0-9]/g, '');
-                      setPhoneNumber(onlyNums);
-                    }}
-
+                    onChange={(e) => setPhoneNumber(e.target.value)}
                   />
                 </div>
 
