@@ -268,7 +268,7 @@ const AuthPage = () => {
                       const onlyNums = e.target.value.replace(/[^0-9]/g, '');
                       setPhoneNumber(onlyNums);
                     }}
-                    required
+
                   />
                 </div>
 
@@ -295,7 +295,9 @@ const AuthPage = () => {
                         onSuccess={async (credentialResponse) => {
                           const decoded = jwtDecode(credentialResponse.credential);
                           console.log("Google User Data:", decoded);
-                          // Yahan hum baad mein backend ka logic likhenge
+
+                          // 👇 Yeh line user ko bina koi form bhare direct dashboard par bhej degi
+                          navigate('/dashboard');
                         }}
                         onError={() => {
                           console.log('Google Login Failed');
