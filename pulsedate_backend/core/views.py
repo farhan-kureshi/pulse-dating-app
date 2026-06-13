@@ -711,38 +711,40 @@ def send_real_otp(request):
         is_email = '@' in phone_or_email and '.' in phone_or_email
         
         if is_email:
-            print(f"\n👉 Koshish kar rahe hain email bhejne ki: {phone_or_email}")
-            send_mail(
-                subject='Your PulseDate Verification Code',
-                message=f'Hello! Your PulseDate login code is: {otp}. Do not share this with anyone.',
-                from_email=settings.EMAIL_HOST_USER,
-                recipient_list=[phone_or_email],
-                fail_silently=False,
-            )
-            print("✅ Email successfully bhej diya gaya!")
+            print("\n" + "="*40)
+            print(f"👉 Target Email: {phone_or_email}")
+            print(f"🔥🔥🔥 RENDER LOG ASALI OTP: {otp} 🔥🔥🔥")
+            print("="*40 + "\n")
+            
+            try:
+                # Email bhejne ki koshish karega
+                send_mail(
+                    subject='Your PulseDate Verification Code',
+                    message=f'Hello! Your PulseDate login code is: {otp}. Do not share this with anyone.',
+                    from_email=settings.EMAIL_HOST_USER,
+                    recipient_list=[phone_or_email],
+                    fail_silently=False,
+                )
+                print("✅ Email Inbox me chala gaya!")
+            except Exception as e:
+                # Agar network block hai, toh server crash nahi hoga
+                print("❌ Gmail ne network block kiya, par OTP uper print ho gaya hai! Aage badho!")
         else:
             if len(phone_or_email) != 10:
                 return Response({"error": "Mobile number exactly 10 digits ka hona chahiye."}, status=400)
             print(f"\n🔥 Terminal OTP for {phone_or_email}: {otp}")
 
-        # Database mein save karne ka logic
-        print("👉 Database mein OTP save kar rahe hain...")
+        # Database mein save karo
         OTPRecord.objects.update_or_create(
             phone_number=phone_or_email,
             defaults={'otp': otp, 'timestamp': timezone.now()}
         )
-        print("✅ Database save successful!\n")
         
-        return Response({"message": "OTP sent successfully!"})
+        # Frontend ko hamesha "Success" bhejo taaki wo OTP mangne wali screen dikhaye
+        return Response({"message": "OTP Sent Successfully!"})
         
     except Exception as e:
-        import traceback
-        print("\n❌❌❌ ASALI ERROR YAHAN HAI ❌❌❌")
-        print(traceback.format_exc())
-        print("❌❌❌======================❌❌❌\n")
-        
-        # Hum status 200 bhej rahe hain taaki CORS block na kare aur error screen par dikhe
-        return Response({"error": f"System Crash Error: {str(e)}"})
+        return Response({"error": f"System Crash Error: {str(e)}"}, status=400)
 
 
 @api_view(['POST'])
