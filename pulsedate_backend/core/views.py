@@ -700,8 +700,10 @@ def send_real_otp(request):
             if len(phone_or_email) != 10:
                 return Response({"error": "Mobile number exactly 10 digits ka hona chahiye."}, status=400)
             print(f"\n🔥 Terminal OTP for {phone_or_email}: {otp}")
+            
 
         # DB mein save karo
+        print("OTP SAVE SUCCESS")
         OTPRecord.objects.update_or_create(
             phone_number=phone_or_email,
             defaults={'otp': otp, 'timestamp': timezone.now()}
