@@ -60,13 +60,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173", 
-    "http://127.0.0.1:5173", # 👈 NAYA: IP address bhi allow kiya
-    "http://localhost:3000", 
-    "http://127.0.0.1:3000",
-    "https://pulse-dating-app.vercel.app",
-]
+# Yeh saari websites (Vercel, Localhost) ko smoothly connect hone dega
+CORS_ALLOW_ALL_ORIGINS = True
 ROOT_URLCONF = 'pulsedate_backend.urls'
 
 TEMPLATES = [
