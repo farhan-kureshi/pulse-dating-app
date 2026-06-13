@@ -17,7 +17,10 @@ import requests
 from .models import OTPRecord
 
 # Apne keys yahan dalein
-client = razorpay.Client(auth=(os.environ.get('RAZORPAY_KEY_ID'), os.environ.get('RAZORPAY_KEY_SECRET')))
+# Agar environment variable nahi mila, toh dummy string use karega (server crash nahi hoga)
+razorpay_id = os.environ.get('RAZORPAY_KEY_ID', 'dummy_id')
+razorpay_secret = os.environ.get('RAZORPAY_KEY_SECRET', 'dummy_secret')
+client = razorpay.Client(auth=(razorpay_id, razorpay_secret))
 
 @api_view(['POST'])
 def create_order(request):
@@ -697,19 +700,22 @@ def get_admin_transactions(request):
     
 @api_view(['POST'])
 def send_real_otp(request):
-    phone_or_email = request.data.get('phone_number') # Frontend isko 'phone_number' hi bhej raha hai
+    phone_or_email = request.data.get('phone_number')
     
     if not phone_or_email:
         return Response({"error": "Email ya Phone number zaruri hai."}, status=400)
         
-    otp = str(random.randint(1000, 9999)) # 4 digit OTP
-    
-    # Check karein ki user ne Email daala hai ya Phone Number
+    otp = str(random.randint(1000, 9999))
     is_email = '@' in phone_or_email and '.' in phone_or_email
     
     if is_email:
         # --- GMAIL SE BHEJNE KA LOGIC ---
         try:
+            # Pata lagate hain ki Render ko password mila ya nahi
+            if not settings.EMAIL_HOST_PASSWORD:
+                print("❌ ERROR: Render me EMAIL_HOST_PASSWORD set nahi hai!")
+                return Response({"error": "Server error: Password missing"}, status=400)
+
             send_mail(
                 subject='Your PulseDate Verification Code',
                 message=f'Hello! Your PulseDate login code is: {otp}. Do not share this with anyone.',
@@ -719,7 +725,9 @@ def send_real_otp(request):
             )
             print(f"📧 Email sent successfully to: {phone_or_email}")
         except Exception as e:
-            return Response({"error": f"Failed to send email: {str(e)}"}, status=500)
+            # Agar password galat hoga, toh crash nahi hoga, balki console me error dega
+            print(f"❌ EMAIL SEND ERROR: {str(e)}")
+            return Response({"error": f"Failed to send email: {str(e)}"}, status=400) 
     else:
         # --- PHONE NUMBER (TERMINAL LOGIC) ---
         if len(phone_or_email) != 10:
@@ -731,14 +739,13 @@ def send_real_otp(request):
         print(f"OTP: {otp}")
         print("="*30 + "\n")
 
-    # OTP ko Database mein save kar lo (donon case mein chalega)
+    # OTP ko Database mein save kar lo
     OTPRecord.objects.update_or_create(
         phone_number=phone_or_email,
         defaults={'otp': otp, 'timestamp': timezone.now()}
     )
-    
-    # React ko bol do ki OTP bhej diya hai
     return Response({"message": "OTP sent successfully!"})
+
 
 @api_view(['POST'])
 def login_user(request):
