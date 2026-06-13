@@ -711,7 +711,8 @@ def send_real_otp(request):
         return Response({"message": "OTP Sent Successfully!"})
         
     except Exception as e:
-        return Response({"error": f"System Error: {str(e)}"}, status=400)
+        print("FULL ERROR =", str(e))
+        return Response({"error": str(e)}, status=400)
 
 
 @api_view(['POST'])
