@@ -62,6 +62,7 @@ MIDDLEWARE = [
 ]
 # Yeh saari websites (Vercel, Localhost) ko smoothly connect hone dega
 CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
 ROOT_URLCONF = 'pulsedate_backend.urls'
 
 TEMPLATES = [
