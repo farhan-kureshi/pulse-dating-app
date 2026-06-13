@@ -6,7 +6,13 @@ from core.views import test_connection, login_user, update_profile, get_profile,
 from django.conf import settings
 from django.conf.urls.static import static
 from core import views
+from django.http import HttpResponse
+
+def home(request):
+    return HttpResponse("PulseDate Backend Running! 🚀")
+    
 urlpatterns = [
+    path('', home),
     path('admin/', admin.site.urls),
     path('api/test/', test_connection),
     path('api/login/', login_user),
