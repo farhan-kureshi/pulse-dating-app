@@ -68,7 +68,6 @@ class Message(models.Model):
     image = models.ImageField(upload_to='chat_images/', null=True, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
-    image = models.ImageField(upload_to='chat_images/', null=True, blank=True)
     
     # 👇 NAYE FEATURES KE LIYE 2 NAYI LINES 👇
     reaction = models.CharField(max_length=20, null=True, blank=True) # ❤️ 😂 😮 save karne ke liye

@@ -75,36 +75,6 @@ def test_connection(request):
     """
     return Response({"message": "Backend Connected! Hello Farhan."})
 
-@api_view(['POST'])
-def login_user(request):
-    """
-    Handles User Authentication (Login and Signup).
-    Checks the database for existing phone numbers based on the selected mode.
-    """
-    phone = request.data.get('phone_number')
-    mode = request.data.get('mode')
-    
-    if not phone:
-        return Response({"error": "Phone number is required."}, status=400)
-        
-    user_exists = UserProfile.objects.filter(phone_number=phone).exists()
-    
-    if mode == 'login':
-        if user_exists:
-            user = UserProfile.objects.get(phone_number=phone)
-            return Response({"message": "Login successful! Welcome back.", "user_id": user.id})
-        else:
-            return Response({"error": "Account not found. Please sign up first."}, status=404)
-            
-    elif mode == 'signup':
-        if user_exists:
-            return Response({"error": "This number is already registered. Please log in."}, status=400)
-        else:
-            user = UserProfile.objects.create(phone_number=phone)
-            return Response({"message": "New account created successfully!", "user_id": user.id})
-            
-    else:
-        return Response({"error": "System Error: Mode not provided or recognized."}, status=400)
 
 @api_view(['POST'])
 def update_profile(request):
@@ -171,13 +141,11 @@ def get_profile(request, user_id):
             # 👇 YEH 5 NAYI LINES ADD KAREIN 👇
             "college": user.college,             
             "drinking_habit": user.drinking_habit,
-            "dob": user.dob,                     
             "gender": user.gender,               
             "interested_in": user.interested_in, 
             "is_premium": user.is_premium,
             
-            "photo_1": user.profile_pic_1.url if user.profile_pic_1 else None,
-            "photo_2": user.profile_pic_2.url if user.profile_pic_2 else None,
+           
             "photo_1": user.profile_pic_1.url if user.profile_pic_1 else None,
             "photo_2": user.profile_pic_2.url if user.profile_pic_2 else None,
             "photo_3": user.profile_pic_3.url if user.profile_pic_3 else None,
@@ -230,7 +198,7 @@ def get_discovery_profiles(request, user_id):
 
             # Photos ko array mein daalo
             photos = []
-            base_url = "http://127.0.0.1:8000"
+            # base_url = "http://127.0.0.1:8000"
             if p.profile_pic_1: photos.append(base_url + p.profile_pic_1.url)
             if p.profile_pic_2: photos.append(base_url + p.profile_pic_2.url)
             if p.profile_pic_3: photos.append(base_url + p.profile_pic_3.url)
@@ -329,7 +297,7 @@ def get_sidebar_data(request, user_id):
     """
     try:
         user = UserProfile.objects.get(id=user_id)
-        base_url = "http://127.0.0.1:8000"
+        # base_url = "http://127.0.0.1:8000"
 
         # 1. Asali Matches Dhoondo
         matches = Match.objects.filter(Q(user1=user) | Q(user2=user))

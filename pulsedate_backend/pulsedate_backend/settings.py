@@ -24,7 +24,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-gb)!ot391%rjb%=)c#1_*jns1kz!lw74_92c9&7im%flli8xxl'
+# SECRET_KEY = 'django-insecure-gb)!ot391%rjb%=)c#1_*jns1kz!lw74_92c9&7im%flli8xxl'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -90,7 +91,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'defaultdb',
         'USER': 'avnadmin',
-        'PASSWORD': 'AVNS_hvMtkTGVyqBt6tsNp_W',
+        # 'PASSWORD': 'AVNS_hvMtkTGVyqBt6tsNp_W',
+        'PASSWORD': os.environ.get('DB_PASSWORD'),
+
         'HOST': 'mysql-1548b31-pulsedate-project.d.aivencloud.com',
         'PORT': '17223',
         'OPTIONS': {
@@ -142,8 +145,7 @@ STATIC_URL = 'static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+
 
 # WebSockets ke liye Channel Layers Setup
 CHANNEL_LAYERS = {
@@ -157,14 +159,13 @@ CHANNEL_LAYERS = {
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': 'dd63u5c9j',
     'API_KEY': '345264863295516',
-    'API_SECRET': 'yCjRbu0LTivO31K8VtthLokr684',
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
 }
-
 # Yeh configuration zaroori hai taaki upload smooth ho
 cloudinary.config( 
     cloud_name = "dd63u5c9j", 
     api_key = "345264863295516", 
-    api_secret = "yCjRbu0LTivO31K8VtthLokr684" 
+    # api_secret = "yCjRbu0LTivO31K8VtthLokr684" 
 )
 
 # Django ko batana ki media files (photos) Cloudinary par bhejni hain

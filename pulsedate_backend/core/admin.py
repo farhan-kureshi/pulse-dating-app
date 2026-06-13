@@ -29,9 +29,9 @@ class UserProfileAdmin(admin.ModelAdmin):
         ('VIP & Premium Control', {
             'fields': ('is_premium', 'premium_expiry_date')
         }),
-        ('Photos', {
-            'fields': ('photo_1', 'photo_2', 'photo_3', 'photo_4', 'photo_5', 'photo_6')
-        }),
+      ('Photos', {
+    'fields': ('profile_pic_1', 'profile_pic_2', 'profile_pic_3', 'profile_pic_4', 'profile_pic_5', 'profile_pic_6')
+}),
     )
 
     # Custom column to show tick/cross for Premium status in admin panel

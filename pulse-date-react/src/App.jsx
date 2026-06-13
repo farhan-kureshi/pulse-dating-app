@@ -30,12 +30,11 @@ function App() {
         />
 
         {/* Catch-all route */}
-        <Route path="*" element={<Navigate to="/" />} />
-
-        <Route path="/admin-panel" element={<AdminDashboard />} />
-        <Route path="/mission" element={<MissionPage />} />
-        <Route path="/safety" element={<SafetyPage />} />
-        <Route path="/community" element={<CommunityPage />} />
+       <Route path="/admin-panel" element={<AdminDashboard />} />
+<Route path="/mission" element={<MissionPage />} />
+<Route path="/safety" element={<SafetyPage />} />
+<Route path="/community" element={<CommunityPage />} />
+<Route path="*" element={<Navigate to="/" />} />   // ← HAMESHA SABSE LAST
       </Routes>
     </Router>
   );
