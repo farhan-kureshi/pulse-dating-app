@@ -14,11 +14,10 @@ from django.utils import timezone
 from django.db import models
 import random
 import requests
-from django.utils import timezone
 from .models import OTPRecord
 
 # Apne keys yahan dalein
-client = razorpay.Client(auth=("rzp_test_SgzTfh4Rj34CWK", "7bE7HQTf2hb0h58D0zLSrHCq"))
+client = razorpay.Client(auth=(os.environ.get('RAZORPAY_KEY_ID'), os.environ.get('RAZORPAY_KEY_SECRET')))
 
 @api_view(['POST'])
 def create_order(request):
