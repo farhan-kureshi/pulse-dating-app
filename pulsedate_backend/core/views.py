@@ -685,34 +685,33 @@ def send_real_otp(request):
             print("="*40 + "\n")
             
             try:
-                # Email bhejne ki koshish karega
                 send_mail(
                     subject='Your PulseDate Verification Code',
-                    message=f'Hello! Your PulseDate login code is: {otp}. Do not share this with anyone.',
+                    message=f'Your PulseDate OTP is: {otp}',
                     from_email=settings.EMAIL_HOST_USER,
                     recipient_list=[phone_or_email],
                     fail_silently=False,
                 )
-                print("✅ Email Inbox me chala gaya!")
-            except Exception as e:
-                # Agar network block hai, toh server crash nahi hoga
-                print("❌ Gmail ne network block kiya, par OTP uper print ho gaya hai! Aage badho!")
+                print("✅ Email send ho gayi!")
+            except Exception as mail_error:
+                print(f"❌ Email Error: {mail_error}")
+                # Email fail ho toh bhi aage badho - OTP DB mein save hoga
         else:
             if len(phone_or_email) != 10:
                 return Response({"error": "Mobile number exactly 10 digits ka hona chahiye."}, status=400)
             print(f"\n🔥 Terminal OTP for {phone_or_email}: {otp}")
 
-        # Database mein save karo
+        # DB mein save karo
         OTPRecord.objects.update_or_create(
             phone_number=phone_or_email,
             defaults={'otp': otp, 'timestamp': timezone.now()}
         )
         
-        # Frontend ko hamesha "Success" bhejo taaki wo OTP mangne wali screen dikhaye
+        # HAMESHA 200 return karo ✅
         return Response({"message": "OTP Sent Successfully!"})
         
     except Exception as e:
-        return Response({"error": f"System Crash Error: {str(e)}"}, status=400)
+        return Response({"error": f"System Error: {str(e)}"}, status=400)
 
 
 @api_view(['POST'])
