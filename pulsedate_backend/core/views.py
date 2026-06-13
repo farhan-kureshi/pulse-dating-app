@@ -701,22 +701,17 @@ def get_admin_transactions(request):
     
 @api_view(['POST'])
 def send_real_otp(request):
-    phone_or_email = request.data.get('phone_number')
-    
-    if not phone_or_email:
-        return Response({"error": "Email ya Phone number zaruri hai."}, status=400)
+    try:
+        phone_or_email = request.data.get('phone_number')
         
-    otp = str(random.randint(1000, 9999))
-    is_email = '@' in phone_or_email and '.' in phone_or_email
-    
-    if is_email:
-        # --- GMAIL SE BHEJNE KA LOGIC ---
-        try:
-            # Pata lagate hain ki Render ko password mila ya nahi
-            if not settings.EMAIL_HOST_PASSWORD:
-                print("❌ ERROR: Render me EMAIL_HOST_PASSWORD set nahi hai!")
-                return Response({"error": "Server error: Password missing"}, status=400)
-
+        if not phone_or_email:
+            return Response({"error": "Email ya Phone number zaruri hai."}, status=400)
+            
+        otp = str(random.randint(1000, 9999))
+        is_email = '@' in phone_or_email and '.' in phone_or_email
+        
+        if is_email:
+            print(f"\n👉 Koshish kar rahe hain email bhejne ki: {phone_or_email}")
             send_mail(
                 subject='Your PulseDate Verification Code',
                 message=f'Hello! Your PulseDate login code is: {otp}. Do not share this with anyone.',
@@ -724,28 +719,30 @@ def send_real_otp(request):
                 recipient_list=[phone_or_email],
                 fail_silently=False,
             )
-            print(f"📧 Email sent successfully to: {phone_or_email}")
-        except Exception as e:
-            # Agar password galat hoga, toh crash nahi hoga, balki console me error dega
-            print(f"❌ EMAIL SEND ERROR: {str(e)}")
-            return Response({"error": f"Failed to send email: {str(e)}"}, status=400) 
-    else:
-        # --- PHONE NUMBER (TERMINAL LOGIC) ---
-        if len(phone_or_email) != 10:
-            return Response({"error": "Mobile number exactly 10 digits ka hona chahiye."}, status=400)
-            
-        print("\n" + "="*30)
-        print(f"🔥 PULSEDATE OTP HACK 🔥")
-        print(f"Number: {phone_or_email}")
-        print(f"OTP: {otp}")
-        print("="*30 + "\n")
+            print("✅ Email successfully bhej diya gaya!")
+        else:
+            if len(phone_or_email) != 10:
+                return Response({"error": "Mobile number exactly 10 digits ka hona chahiye."}, status=400)
+            print(f"\n🔥 Terminal OTP for {phone_or_email}: {otp}")
 
-    # OTP ko Database mein save kar lo
-    OTPRecord.objects.update_or_create(
-        phone_number=phone_or_email,
-        defaults={'otp': otp, 'timestamp': timezone.now()}
-    )
-    return Response({"message": "OTP sent successfully!"})
+        # Database mein save karne ka logic
+        print("👉 Database mein OTP save kar rahe hain...")
+        OTPRecord.objects.update_or_create(
+            phone_number=phone_or_email,
+            defaults={'otp': otp, 'timestamp': timezone.now()}
+        )
+        print("✅ Database save successful!\n")
+        
+        return Response({"message": "OTP sent successfully!"})
+        
+    except Exception as e:
+        import traceback
+        print("\n❌❌❌ ASALI ERROR YAHAN HAI ❌❌❌")
+        print(traceback.format_exc())
+        print("❌❌❌======================❌❌❌\n")
+        
+        # Hum status 200 bhej rahe hain taaki CORS block na kare aur error screen par dikhe
+        return Response({"error": f"System Crash Error: {str(e)}"})
 
 
 @api_view(['POST'])
